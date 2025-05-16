@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import Navbar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
+import FooterWrapper from "@/components/layout/footer-wrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "RojgarHub - Find Your Dream Job",
+  title: "RozgarHub - Find Your Dream Job",
   description: "A modern job portal to connect job seekers with employers",
   keywords: ["jobs", "career", "employment", "recruitment", "hiring", "job portal"],
 };
@@ -33,7 +33,7 @@ export default function RootLayout({
             <main className="flex-grow relative z-10">
               {children}
             </main>
-            <Footer />
+            <FooterWrapper />
           </div>
         </ThemeProvider>
       </body>

@@ -147,7 +147,7 @@ export default function Home() {
                 Find Your Dream Job With{" "}
                 <span className="relative">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/80">
-                    RojgarHub
+                    RozgarHub
                   </span>
                   <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-primary/20 rounded-full" />
                 </span>
@@ -273,7 +273,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              How RojgarHub Works
+              How RozgarHub Works
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
               Your path to career success made simple

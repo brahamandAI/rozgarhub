@@ -33,7 +33,7 @@ const Footer = () => {
       ],
     },
     {
-      title: "RojgarHub",
+      title: "RozgarHub",
       links: [
         { name: "About Us", href: "/example/about" },
         { name: "Contact Us", href: "/example/contact" },
@@ -53,7 +53,7 @@ const Footer = () => {
             <Link href="/" className="flex items-center space-x-2">
               <BriefcaseBusiness className="h-8 w-8 text-primary" />
               <span className="text-xl font-bold text-foreground">
-                RojgarHub
+                RozgarHub
               </span>
             </Link>
             <p className="text-muted-foreground max-w-md">
@@ -117,7 +117,7 @@ const Footer = () => {
         {/* Bottom section */}
         <div className="border-t mt-16 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} RojgarHub. All rights reserved.
+            © {currentYear} RozgarHub. All rights reserved.
           </p>
           <div className="flex items-center space-x-8">
             <Link href="/example/privacy" className="text-sm text-muted-foreground hover:text-foreground">
