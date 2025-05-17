@@ -22,9 +22,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -253,11 +258,11 @@ const Navbar = () => {
               className="rounded-full p-2 hover:bg-muted transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? (
+              {mounted && (theme === "dark" ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />
-              )}
+              ))}
             </button>
             
             {/* Recruiter Links Dropdown */}
@@ -334,11 +339,11 @@ const Navbar = () => {
               className="p-2 rounded-full hover:bg-muted transition-colors"
               aria-label="Toggle theme"
             >
-              {theme === "dark" ? (
+              {mounted && (theme === "dark" ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />
-              )}
+              ))}
             </button>
             
             <button 

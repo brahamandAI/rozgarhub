@@ -8,6 +8,7 @@ import { Search, BriefcaseBusiness, Users, Building, TrendingUp, ArrowRight, Map
 import { Button } from "@/components/ui/button";
 import { HeroIllustration } from "@/components/ui/HeroIllustration";
 import { JobCard } from "@/components/job/JobCard";
+import { TypewriterText } from "@/components/ui/TypewriterText";
 
 // Mock data for featured jobs
 const featuredJobs = [
@@ -108,6 +109,22 @@ const howItWorks = [
   },
 ];
 
+// Job roles for the typewriter effect
+const jobRoles = [
+  "Dream",
+  "Tech",
+  "Software",
+  "Data Science", 
+  "DevOps",
+  "Cloud",
+  "Web Dev",
+  "Marketing",
+  "Healthcare",
+  "Engineering",
+  "Remote",
+  "Freelance"
+];
+
 export default function Home() {
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true, amount: 0.3 });
@@ -143,16 +160,28 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="flex flex-col"
             >
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-                Find Your Dream Job With{" "}
-                <span className="relative">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/80">
-                    RozgarHub
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground font-outfit leading-tight">
+                <div>
+                  Find Your{" "}
+                  <span className="relative inline-block">
+                    <TypewriterText 
+                      words={jobRoles} 
+                      delayBetweenWords={2500} 
+                      className="inline-block font-bold"
+                    />
                   </span>
-                  <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-primary/50 to-primary/20 rounded-full" />
-                </span>
+                </div>
+                <div>
+                  Job With{" "}
+                  <span className="relative">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-blue-600 animate-gradient">
+                      RozgarHub
+                    </span>
+                    <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-blue-500/50 to-purple-500/50 rounded-full" />
+                  </span>
+                </div>
               </h1>
-              <p className="mt-6 text-lg text-muted-foreground max-w-md leading-relaxed">
+              <p className="mt-6 text-lg text-muted-foreground max-w-md leading-relaxed font-outfit">
                 Connect with top employers and discover opportunities that match your skills and career goals. Your next career move starts here.
               </p>
 

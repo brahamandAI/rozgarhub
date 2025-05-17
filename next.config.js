@@ -4,16 +4,10 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     optimizeCss: true,
-    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
+    optimizeFonts: true,
   },
-  webpack: (config, { dev, isServer }) => {
-    // Optimize memory usage
-    config.optimization = {
-      ...config.optimization,
-      moduleIds: 'deterministic',
-      chunkIds: 'deterministic',
-    }
-    return config
+  webpack: (config) => {
+    return config;
   },
 }
 
