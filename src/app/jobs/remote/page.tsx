@@ -1,49 +1,100 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, MapPin, Clock, Search, ChevronDown, Filter, SlidersHorizontal } from "lucide-react";
+
+// Job interface
+interface Job {
+  id: number;
+  title: string;
+  company: string;
+  location: string;
+  type: string;
+  salary?: string;
+  posted?: string;
+  logo?: string;
+  tags?: string[];
+  postedDate?: string;
+  description?: string;
+  requirements?: string[];
+}
 
 export default function RemoteJobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - would be replaced with API call in production
-  const jobs = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "TechCorp Global",
-      location: "Remote",
-      type: "Full-time",
-      salary: "$90,000 - $120,000",
-      posted: "2 days ago",
-      logo: "/placeholder.png",
-      tags: ["React", "TypeScript", "Next.js"],
-    },
-    {
-      id: 2,
-      title: "Product Designer",
-      company: "DesignHub",
-      location: "Remote",
-      type: "Full-time",
-      salary: "$85,000 - $110,000",
-      posted: "3 days ago",
-      logo: "/placeholder.png",
-      tags: ["Figma", "UI/UX", "Prototyping"],
-    },
-    {
-      id: 3,
-      title: "DevOps Engineer",
-      company: "CloudSys",
-      location: "Remote",
-      type: "Contract",
-      salary: "$100,000 - $130,000",
-      posted: "1 day ago",
-      logo: "/placeholder.png",
-      tags: ["AWS", "Kubernetes", "CI/CD"],
-    },
-  ];
+  // Load jobs from localStorage
+  useEffect(() => {
+    try {
+      const jobsData = localStorage.getItem("jobs");
+      if (jobsData) {
+        const allJobs = JSON.parse(jobsData);
+        // Filter remote jobs only
+        const remoteJobs = allJobs
+          .filter((job: any) => 
+            job.location.toLowerCase().includes("remote") || 
+            job.locationType === "remote"
+          )
+          .map((job: any) => ({
+            id: job.id,
+            title: job.title,
+            company: job.company,
+            location: "Remote",
+            type: job.employmentType || "Full-time",
+            salary: job.salary && job.salary.min && job.salary.max 
+              ? `$${job.salary.min.toLocaleString()} - $${job.salary.max.toLocaleString()}` 
+              : "Salary not specified",
+            posted: job.postedDate 
+              ? getTimeAgo(new Date(job.postedDate))
+              : "Recently",
+            tags: job.requirements 
+              ? job.requirements.slice(0, 3) 
+              : [],
+            description: job.description
+          }));
+        setJobs(remoteJobs);
+      } else {
+        setJobs([]);
+      }
+    } catch (error) {
+      console.error("Error loading remote jobs:", error);
+      setJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Filter jobs based on search term
+  const filteredJobs = jobs.filter(job => 
+    searchTerm === "" || 
+    job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (job.tags && job.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+  );
+
+  // Helper function to format time ago
+  const getTimeAgo = (date: Date): string => {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInDays > 30) {
+      return `${Math.floor(diffInDays / 30)} months ago`;
+    } else if (diffInDays > 0) {
+      return `${diffInDays} days ago`;
+    } else if (diffInHours > 0) {
+      return `${diffInHours} hours ago`;
+    } else if (diffInMinutes > 0) {
+      return `${diffInMinutes} minutes ago`;
+    } else {
+      return 'Just now';
+    }
+  };
 
   const staggerAnimation = {
     hidden: { opacity: 0 },
@@ -151,61 +202,89 @@ export default function RemoteJobsPage() {
           )}
         </div>
 
+        {/* Loading state */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
+            <p className="ml-4 text-muted-foreground">Loading remote jobs...</p>
+          </div>
+        )}
+
         {/* Jobs List */}
-        <motion.div 
-          variants={staggerAnimation}
-          initial="hidden"
-          animate="show"
-          className="space-y-4"
-        >
-          {jobs.map((job) => (
-            <motion.div
-              key={job.id}
-              variants={itemAnimation}
-              className="bg-background border border-border rounded-xl p-6 hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-col md:flex-row md:items-center">
-                <div className="flex-1">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
-                      <Briefcase className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">{job.title}</h3>
-                      <p className="text-muted-foreground">{job.company}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                          {job.type}
-                        </span>
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-400">
-                          <MapPin className="mr-1 h-3 w-3" />
-                          {job.location}
-                        </span>
-                        {job.tags.map((tag) => (
-                          <span 
-                            key={tag} 
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+        {!loading && (
+          <>
+            {filteredJobs.length > 0 ? (
+              <motion.div 
+                variants={staggerAnimation}
+                initial="hidden"
+                animate="show"
+                className="space-y-4"
+              >
+                {filteredJobs.map((job) => (
+                  <motion.div
+                    key={job.id}
+                    variants={itemAnimation}
+                    className="bg-background border border-border rounded-xl p-6 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-center">
+                      <div className="flex-1">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 rounded-md bg-primary/10 flex items-center justify-center">
+                            <Briefcase className="w-6 h-6 text-primary" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold">{job.title}</h3>
+                            <p className="text-muted-foreground">{job.company}</p>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                {job.type}
+                              </span>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-400">
+                                <MapPin className="mr-1 h-3 w-3" />
+                                {job.location}
+                              </span>
+                              {job.tags && job.tags.map((tag) => (
+                                <span 
+                                  key={tag} 
+                                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted text-foreground"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-4 md:mt-0 flex flex-col md:items-end gap-2">
+                        <div className="text-sm font-medium">{job.salary}</div>
+                        <div className="text-xs text-muted-foreground flex items-center">
+                          <Clock className="mr-1 h-3 w-3" /> Posted {job.posted}
+                        </div>
+                        <button className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
+                          Apply Now
+                        </button>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div className="mt-4 md:mt-0 flex flex-col md:items-end gap-2">
-                  <div className="text-sm font-medium">{job.salary}</div>
-                  <div className="text-xs text-muted-foreground flex items-center">
-                    <Clock className="mr-1 h-3 w-3" /> Posted {job.posted}
-                  </div>
-                  <button className="mt-2 px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors">
-                    Apply Now
-                  </button>
-                </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <div className="text-center py-20 bg-background border border-border rounded-xl">
+                <Briefcase className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-xl font-bold mb-2">No remote jobs found</h2>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  We couldn't find any remote jobs matching your search. Try adjusting your search terms or check back later.
+                </p>
+                <button 
+                  onClick={() => setSearchTerm("")}
+                  className="mt-6 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Clear Search
+                </button>
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
+            )}
+          </>
+        )}
       </div>
     </main>
   );

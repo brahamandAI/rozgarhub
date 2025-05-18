@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   Menu, X, Search, BriefcaseBusiness, Sun, Moon, User, 
   ChevronDown, FileText, Laptop, Clock, GraduationCap, Home,
-  LayoutDashboard, Users, BookOpen, Briefcase, Building
+  LayoutDashboard, Users, BookOpen, Briefcase, Building, LogOut
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -23,11 +23,28 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState("");
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   
   useEffect(() => {
     setMounted(true);
+    
+    // Check if user is logged in
+    const currentUser = localStorage.getItem("currentUser");
+    const currentRecruiter = localStorage.getItem("currentRecruiter");
+    
+    if (currentUser || currentRecruiter) {
+      setIsLoggedIn(true);
+      if (currentUser) {
+        const userData = JSON.parse(currentUser);
+        setUsername(userData.fullName || userData.email || "User");
+      } else if (currentRecruiter) {
+        const recruiterData = JSON.parse(currentRecruiter);
+        setUsername(recruiterData.fullName || recruiterData.email || "Recruiter");
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -51,6 +68,15 @@ const Navbar = () => {
 
   const handleMouseLeave = () => {
     setActiveDropdown(null);
+  };
+  
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("currentRecruiter");
+    setIsLoggedIn(false);
+    setUsername("");
+    window.location.href = "/";
   };
 
   const navLinks: NavLinkWithDropdown[] = [
@@ -103,6 +129,13 @@ const Navbar = () => {
     { name: "Login", href: "/auth/login" },
     { name: "Register", href: "/auth/register" },
   ];
+
+  // Update recruiter dropdown links if logged in
+  if (isLoggedIn) {
+    recruiterLinks.dropdown = [
+      { name: "Recruiter Dashboard", href: "/dashboard/recruiter", icon: <LayoutDashboard className="w-4 h-4" /> },
+    ];
+  }
 
   const menuVariants = {
     closed: {
@@ -265,6 +298,11 @@ const Navbar = () => {
               ))}
             </button>
             
+            {/* Welcome message if logged in */}
+            {isLoggedIn && username && (
+              <span className="text-sm font-medium text-primary">Welcome, {username}!</span>
+            )}
+            
             {/* Recruiter Links Dropdown */}
             <div 
               className="relative"
@@ -316,24 +354,38 @@ const Navbar = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              {authLinks.map((link, index) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
-                    index === 0
-                      ? "text-foreground hover:bg-muted"
-                      : "bg-primary text-primary-foreground hover:bg-primary/90"
-                  }`}
+              {isLoggedIn ? (
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 text-sm font-medium rounded-full transition-all bg-red-600 text-white hover:bg-red-700 flex items-center space-x-1"
                 >
-                  {link.name}
-                </Link>
-              ))}
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Logout
+                </button>
+              ) : (
+                authLinks.map((link, index) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
+                      index === 0
+                        ? "text-foreground hover:bg-muted"
+                        : "bg-primary text-primary-foreground hover:bg-primary/90"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))
+              )}
             </div>
           </div>
 
           {/* Mobile menu button */}
           <div className="flex items-center space-x-3 md:hidden">
+            {isLoggedIn && username && (
+              <span className="text-sm font-medium text-primary">Welcome, {username}!</span>
+            )}
+            
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-full hover:bg-muted transition-colors"
@@ -500,21 +552,32 @@ const Navbar = () => {
                 </motion.div>
 
                 <div className="pt-4 mt-4 border-t flex flex-col space-y-3">
-                  {authLinks.map((link, index) => (
-                    <motion.div key={link.name} variants={itemVariants}>
-                      <Link
-                        href={link.href}
-                        onClick={closeMenu}
-                        className={`block py-3 text-center rounded-lg text-base font-medium ${
-                          index === 0
-                            ? "border border-border hover:bg-muted"
-                            : "bg-primary text-primary-foreground hover:bg-primary/90"
-                        }`}
+                  {isLoggedIn ? (
+                    <motion.div variants={itemVariants}>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full py-3 text-center rounded-lg text-base font-medium bg-red-600 text-white hover:bg-red-700"
                       >
-                        {link.name}
-                      </Link>
+                        Logout
+                      </button>
                     </motion.div>
-                  ))}
+                  ) : (
+                    authLinks.map((link, index) => (
+                      <motion.div key={link.name} variants={itemVariants}>
+                        <Link
+                          href={link.href}
+                          onClick={closeMenu}
+                          className={`block py-3 text-center rounded-lg text-base font-medium ${
+                            index === 0
+                              ? "border border-border hover:bg-muted"
+                              : "bg-primary text-primary-foreground hover:bg-primary/90"
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               </motion.div>
             </motion.div>

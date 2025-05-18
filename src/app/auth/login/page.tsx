@@ -47,10 +47,12 @@ export default function LoginPage() {
       // For demo purposes, simulate a successful login with any valid input
       console.log("Login successful", data);
       
-      // In a real app, you would:
-      // 1. Send credentials to your backend
-      // 2. Store the returned token
-      // 3. Redirect to dashboard or home page
+      // Save user data to localStorage
+      const userData = {
+        email: data.email,
+        fullName: data.email.split("@")[0], // Use part of email as name for demo
+      };
+      localStorage.setItem("currentUser", JSON.stringify(userData));
       
       // Navigate to dashboard (for demo)
       window.location.href = "/dashboard";
