@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   Briefcase, 
@@ -21,81 +21,122 @@ import {
   Mail,
   PhoneCall,
   Eye,
-  AlertCircle
+  AlertCircle,
+  MapPin,
+  GraduationCap,
+  Award
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+
+interface JobSeeker {
+  email: string;
+  fullName: string;
+  profileComplete: boolean;
+  currentJobTitle: string;
+  bio: string;
+  education: string;
+  yearsOfExperience: string;
+  city: string;
+  country: string;
+  skills: string[];
+  certifications: string[];
+}
+
+interface Application {
+  id: string;
+  jobTitle: string;
+  company: string;
+  status: string;
+  appliedDate: string;
+}
+
+interface SavedJob {
+  id: string;
+  jobTitle: string;
+  company: string;
+  location: string;
+  savedDate: string;
+}
+
+interface Interview {
+  id: string;
+  jobTitle: string;
+  company: string;
+  dateTime: string;
+  type: string;
+  status: string;
+}
 
 export default function JobSeekerDashboardPage() {
-  // Mock data for the dashboard
-  const profileCompletion = 75;
-  const applications = [
-    { 
-      id: 1, 
-      position: "Senior Frontend Developer", 
-      company: "TechCorp Global", 
-      location: "Remote",
-      status: "Interview", 
-      date: "2023-08-15",
-      logo: "/placeholder.png"
-    },
-    { 
-      id: 2, 
-      position: "UX Designer", 
-      company: "DesignHub", 
-      location: "San Francisco, CA",
-      status: "Applied", 
-      date: "2023-09-01",
-      logo: "/placeholder.png"
-    },
-    { 
-      id: 3, 
-      position: "Product Manager", 
-      company: "InnovateTech", 
-      location: "New York, NY",
-      status: "Rejected", 
-      date: "2023-07-28",
-      logo: "/placeholder.png"
-    },
-  ];
-  
-  const savedJobs = [
-    { 
-      id: 1, 
-      position: "Backend Developer", 
-      company: "CloudSys", 
-      location: "Remote",
-      salary: "$120,000 - $150,000",
-      posted: "3 days ago",
-      logo: "/placeholder.png"
-    },
-    { 
-      id: 2, 
-      position: "Marketing Director", 
-      company: "BrandGrowth", 
-      location: "Chicago, IL",
-      salary: "$140,000 - $160,000",
-      posted: "1 day ago",
-      logo: "/placeholder.png"
-    },
-  ];
-  
-  const upcomingInterviews = [
-    {
-      id: 1,
-      company: "TechCorp Global",
-      position: "Senior Frontend Developer",
-      date: "2023-09-20T14:30:00",
-      type: "Technical Interview",
-      location: "Virtual (Zoom)",
-    }
-  ];
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [userData, setUserData] = useState<JobSeeker | null>(null);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [savedJobs, setSavedJobs] = useState<SavedJob[]>([]);
+  const [upcomingInterviews, setUpcomingInterviews] = useState<Interview[]>([]);
+  const [stats, setStats] = useState([
+    { name: "Applied Jobs", value: 0, icon: <Briefcase className="h-5 w-5" />, change: "+0", color: "blue" },
+    { name: "Interviews", value: 0, icon: <MessageSquare className="h-5 w-5" />, change: "+0", color: "green" },
+    { name: "Saved Jobs", value: 0, icon: <BookmarkCheck className="h-5 w-5" />, change: "+0", color: "purple" },
+    { name: "Profile Views", value: 0, icon: <Eye className="h-5 w-5" />, change: "+0", color: "amber" },
+  ]);
 
-  const stats = [
-    { name: "Applied Jobs", value: 12, icon: <Briefcase className="h-5 w-5" />, change: "+3", color: "blue" },
-    { name: "Interviews", value: 4, icon: <MessageSquare className="h-5 w-5" />, change: "+1", color: "green" },
-    { name: "Saved Jobs", value: 18, icon: <BookmarkCheck className="h-5 w-5" />, change: "+6", color: "purple" },
-    { name: "Profile Views", value: 32, icon: <Eye className="h-5 w-5" />, change: "+8", color: "amber" },
-  ];
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        // Check if user is logged in
+        const userDataStr = localStorage.getItem('currentJobSeeker');
+        if (!userDataStr) {
+          toast.error("Please login to access the dashboard");
+          router.push("/auth/jobseeker/login");
+          return;
+        }
+
+        const userData = JSON.parse(userDataStr);
+        setUserData(userData);
+
+        // Fetch user's applications
+        const applicationsResponse = await fetch(`/api/jobseeker/applications?email=${userData.email}`);
+        if (applicationsResponse.ok) {
+          const applicationsData = await applicationsResponse.json();
+          setApplications(applicationsData);
+        }
+
+        // Fetch saved jobs
+        const savedJobsResponse = await fetch(`/api/jobseeker/saved-jobs?email=${userData.email}`);
+        if (savedJobsResponse.ok) {
+          const savedJobsData = await savedJobsResponse.json();
+          setSavedJobs(savedJobsData);
+        }
+
+        // Fetch upcoming interviews
+        const interviewsResponse = await fetch(`/api/jobseeker/interviews?email=${userData.email}`);
+        if (interviewsResponse.ok) {
+          const interviewsData = await interviewsResponse.json();
+          setUpcomingInterviews(interviewsData);
+        }
+
+        // Update stats based on real data
+        setStats(prevStats => {
+          const newStats = [...prevStats];
+          newStats[0].value = applications.length;
+          newStats[1].value = upcomingInterviews.length;
+          newStats[2].value = savedJobs.length;
+          return newStats;
+        });
+
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        toast.error("Error loading dashboard data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
   
   // Format date string to readable format
   const formatDate = (dateString: string) => {
@@ -150,6 +191,14 @@ export default function JobSeekerDashboardPage() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <main className="pt-28 pb-20">
       <div className="container mx-auto px-4 md:px-6">
@@ -161,7 +210,7 @@ export default function JobSeekerDashboardPage() {
           >
             <h1 className="text-3xl font-bold mb-1">Dashboard</h1>
             <p className="text-muted-foreground">
-              Hello, John! Here's an overview of your job search activity.
+              Hello, {userData?.fullName}! Here's an overview of your job search activity.
             </p>
           </motion.div>
           
@@ -184,6 +233,102 @@ export default function JobSeekerDashboardPage() {
             </button>
           </motion.div>
         </div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl font-bold mb-1">Welcome back, {userData?.fullName}</h1>
+          <p className="text-muted-foreground">
+            Here's an overview of your job search activity
+          </p>
+        </motion.div>
+
+        {/* Profile Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-background border border-border rounded-xl p-6 mb-6"
+        >
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <h2 className="text-xl font-semibold mb-1">{userData?.fullName}</h2>
+              <p className="text-muted-foreground">{userData?.currentJobTitle}</p>
+            </div>
+            <div className="flex gap-3">
+              <Link
+                href="/dashboard/job-seeker/profile"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+              >
+                <UserRound className="w-4 h-4" />
+                View Full Profile
+              </Link>
+              <Link
+                href="/dashboard/job-seeker/profile/edit"
+                className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors flex items-center gap-2"
+              >
+                Edit Profile
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center gap-3">
+              <GraduationCap className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Education</p>
+                <p className="font-medium">{userData?.education || "Not specified"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Clock className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Experience</p>
+                <p className="font-medium">{userData?.yearsOfExperience || "Not specified"}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <MapPin className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-sm text-muted-foreground">Location</p>
+                <p className="font-medium">
+                  {userData?.city && userData?.country 
+                    ? `${userData.city}, ${userData.country}`
+                    : "Not specified"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">Top Skills</h3>
+              <Link
+                href="/dashboard/job-seeker/profile"
+                className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+              >
+                View all
+              </Link>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {userData?.skills?.slice(0, 5).map((skill, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-purple-600/10 text-purple-400 rounded-full text-sm"
+                >
+                  {skill}
+                </span>
+              ))}
+              {(!userData?.skills || userData.skills.length === 0) && (
+                <span className="text-muted-foreground">No skills added yet</span>
+              )}
+            </div>
+          </div>
+        </motion.div>
         
         {/* Stats Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -216,82 +361,6 @@ export default function JobSeekerDashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Profile Completion */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-background border border-border rounded-xl p-6"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold">Profile Completion</h2>
-                <Link
-                  href="/profile"
-                  className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center"
-                >
-                  <span>Edit Profile</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              </div>
-              
-              <div className="relative pt-1">
-                <div className="flex mb-2 items-center justify-between">
-                  <div>
-                    <span className="text-xs font-semibold inline-block text-primary">
-                      {profileCompletion}% Complete
-                    </span>
-                  </div>
-                </div>
-                <div className="flex h-2 mb-4 overflow-hidden rounded bg-primary/10">
-                  <div
-                    style={{ width: `${profileCompletion}%` }}
-                    className="bg-primary"
-                  ></div>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-5 w-5 relative mt-1">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium">Personal Information</p>
-                    <p className="text-xs text-muted-foreground">Basic contact details</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-5 w-5 relative mt-1">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium">Education</p>
-                    <p className="text-xs text-muted-foreground">Academic background</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-5 w-5 relative mt-1">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium">Work Experience</p>
-                    <p className="text-xs text-muted-foreground">Previous employment</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 h-5 w-5 relative mt-1">
-                    <AlertCircle className="h-5 w-5 text-amber-500" />
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium">Skills & Endorsements</p>
-                    <p className="text-xs text-muted-foreground">Add 3 more skills</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-            
             {/* Recent Applications */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -310,41 +379,42 @@ export default function JobSeekerDashboardPage() {
                 </Link>
               </div>
               
-              {applications.length > 0 ? (
+              {applications.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No applications yet</p>
+                  <Link
+                    href="/jobs"
+                    className="text-primary hover:text-primary/80 text-sm font-medium mt-2 inline-block"
+                  >
+                    Browse Jobs
+                  </Link>
+                </div>
+              ) : (
                 <div className="space-y-4">
-                  {applications.map((application) => (
+                  {applications.map((application: any) => (
                     <div 
                       key={application.id}
-                      className="flex items-center p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
                     >
-                      <div className="h-12 w-12 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Building className="h-6 w-6 text-primary" />
+                      <div className="flex items-center space-x-4">
+                        <div className="h-12 w-12 rounded-lg bg-background flex items-center justify-center">
+                          <Building className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      
-                      <div className="ml-4 flex-1">
+                        <div>
                         <h3 className="font-medium">{application.position}</h3>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <span>{application.company}</span>
-                          <span className="mx-1.5">•</span>
-                          <span>{application.location}</span>
+                          <p className="text-sm text-muted-foreground">{application.company}</p>
                         </div>
                       </div>
-                      
-                      <div className="flex flex-col items-end ml-2">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(application.status)}`}>
+                      <div className="flex items-center space-x-4">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(application.status)}`}>
                           {application.status}
                         </span>
-                        <span className="text-xs text-muted-foreground mt-1">
+                        <span className="text-sm text-muted-foreground">
                           {formatDate(application.date)}
                         </span>
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <Briefcase className="h-10 w-10 mx-auto text-muted-foreground/50" />
-                  <p className="mt-2 text-muted-foreground">No applications yet</p>
                 </div>
               )}
             </motion.div>
@@ -356,60 +426,39 @@ export default function JobSeekerDashboardPage() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
+              transition={{ delay: 0.2 }}
               className="bg-background border border-border rounded-xl p-6"
             >
               <h2 className="text-lg font-semibold mb-6">Upcoming Interviews</h2>
               
-              {upcomingInterviews.length > 0 ? (
+              {upcomingInterviews.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No upcoming interviews</p>
+                </div>
+              ) : (
                 <div className="space-y-4">
-                  {upcomingInterviews.map((interview) => (
+                  {upcomingInterviews.map((interview: any) => (
                     <div 
                       key={interview.id}
-                      className="border border-border bg-background rounded-lg p-4"
+                      className="p-4 bg-muted/50 rounded-lg"
                     >
-                      <div className="flex justify-between items-start">
+                      <div className="flex items-center justify-between mb-2">
                         <h3 className="font-medium">{interview.position}</h3>
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        <span className="text-sm text-muted-foreground">
                           {getDaysUntil(interview.date)}
                         </span>
                       </div>
-                      
-                      <p className="text-sm text-muted-foreground mt-1">{interview.company}</p>
-                      
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center text-sm">
-                          <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground mb-2">{interview.company}</p>
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <Calendar className="h-4 w-4" />
                           <span>{formatInterviewDateTime(interview.date)}</span>
-                        </div>
-                        
-                        <div className="flex items-center text-sm">
-                          <MessageSquare className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span>{interview.type}</span>
-                        </div>
-                        
-                        <div className="flex items-center text-sm">
-                          <Building className="h-4 w-4 mr-2 text-muted-foreground" />
-                          <span>{interview.location}</span>
-                        </div>
                       </div>
-                      
-                      <div className="mt-4 flex space-x-2">
-                        <button className="flex-1 py-1.5 bg-primary text-primary-foreground text-sm font-medium rounded-md text-center hover:bg-primary/90 transition-colors">
-                          Prepare
-                        </button>
-                        
-                        <button className="flex-1 py-1.5 bg-muted text-foreground text-sm font-medium rounded-md text-center hover:bg-muted/80 transition-colors">
-                          Reschedule
-                        </button>
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
+                        <MapPin className="h-4 w-4" />
+                        <span>{interview.location}</span>
                       </div>
                     </div>
                   ))}
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <Calendar className="h-10 w-10 mx-auto text-muted-foreground/50" />
-                  <p className="mt-2 text-muted-foreground">No upcoming interviews</p>
                 </div>
               )}
             </motion.div>
@@ -418,13 +467,13 @@ export default function JobSeekerDashboardPage() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              transition={{ delay: 0.3 }}
               className="bg-background border border-border rounded-xl p-6"
             >
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg font-semibold">Saved Jobs</h2>
                 <Link
-                  href="/dashboard/job-seeker/saved"
+                  href="/dashboard/job-seeker/saved-jobs"
                   className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center"
                 >
                   <span>View All</span>
@@ -432,85 +481,40 @@ export default function JobSeekerDashboardPage() {
                 </Link>
               </div>
               
-              {savedJobs.length > 0 ? (
+              {savedJobs.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No saved jobs yet</p>
+                  <Link
+                    href="/jobs"
+                    className="text-primary hover:text-primary/80 text-sm font-medium mt-2 inline-block"
+                  >
+                    Browse Jobs
+                  </Link>
+                </div>
+              ) : (
                 <div className="space-y-4">
-                  {savedJobs.map((job) => (
+                  {savedJobs.map((job: any) => (
                     <div 
                       key={job.id}
-                      className="flex items-start p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="p-4 bg-muted/50 rounded-lg"
                     >
-                      <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Building className="h-5 w-5 text-primary" />
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium">{job.position}</h3>
+                        <span className="text-sm text-muted-foreground">{job.posted}</span>
                       </div>
-                      
-                      <div className="ml-3">
-                        <h3 className="font-medium text-sm">{job.position}</h3>
-                        <p className="text-xs text-muted-foreground">{job.company} • {job.location}</p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs font-medium">{job.salary}</span>
-                          <span className="text-xs text-muted-foreground">{job.posted}</span>
+                      <p className="text-sm text-muted-foreground mb-2">{job.company}</p>
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span>{job.location}</span>
                         </div>
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
+                        <Briefcase className="h-4 w-4" />
+                        <span>{job.salary}</span>
                       </div>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-6">
-                  <BookmarkCheck className="h-10 w-10 mx-auto text-muted-foreground/50" />
-                  <p className="mt-2 text-muted-foreground">No saved jobs</p>
-                </div>
               )}
-            </motion.div>
-            
-            {/* Quick Actions */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25 }}
-              className="bg-background border border-border rounded-xl p-6"
-            >
-              <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-              
-              <div className="space-y-3">
-                <Link 
-                  href="/resume-builder"
-                  className="flex items-center p-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                    <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div className="ml-3">
-                    <span className="font-medium text-sm">Update Resume</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </Link>
-                
-                <Link 
-                  href="/jobs/search"
-                  className="flex items-center p-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                    <Briefcase className="h-4 w-4 text-green-600 dark:text-green-400" />
-                  </div>
-                  <div className="ml-3">
-                    <span className="font-medium text-sm">Advanced Job Search</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </Link>
-                
-                <Link 
-                  href="/dashboard/job-seeker/settings"
-                  className="flex items-center p-3 rounded-lg hover:bg-muted transition-colors"
-                >
-                  <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <BellRing className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div className="ml-3">
-                    <span className="font-medium text-sm">Job Alert Settings</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
-                </Link>
-              </div>
             </motion.div>
           </div>
         </div>

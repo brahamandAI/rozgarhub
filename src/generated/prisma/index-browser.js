@@ -145,6 +145,36 @@ exports.Prisma.JobSeekerScalarFieldEnum = {
   certifications: 'certifications'
 };
 
+exports.Prisma.RecruiterScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password',
+  companyName: 'companyName',
+  fullName: 'fullName',
+  phone: 'phone',
+  position: 'position',
+  companySize: 'companySize',
+  industry: 'industry',
+  website: 'website',
+  city: 'city',
+  state: 'state',
+  country: 'country',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isActive: 'isActive',
+  lastLogin: 'lastLogin',
+  profileComplete: 'profileComplete',
+  emailVerified: 'emailVerified',
+  phoneVerified: 'phoneVerified',
+  bio: 'bio',
+  linkedinUrl: 'linkedinUrl',
+  companyDescription: 'companyDescription',
+  companyLogo: 'companyLogo',
+  companyBenefits: 'companyBenefits',
+  hiringNeeds: 'hiringNeeds',
+  preferredLocations: 'preferredLocations'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -157,7 +187,8 @@ exports.Prisma.QueryMode = {
 
 
 exports.Prisma.ModelName = {
-  JobSeeker: 'JobSeeker'
+  JobSeeker: 'JobSeeker',
+  Recruiter: 'Recruiter'
 };
 
 /**

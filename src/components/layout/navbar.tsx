@@ -32,13 +32,13 @@ const Navbar = () => {
     setMounted(true);
     
     // Check if user is logged in
-    const currentUser = localStorage.getItem("currentUser");
+    const currentJobSeeker = localStorage.getItem("currentJobSeeker");
     const currentRecruiter = localStorage.getItem("currentRecruiter");
     
-    if (currentUser || currentRecruiter) {
+    if (currentJobSeeker || currentRecruiter) {
       setIsLoggedIn(true);
-      if (currentUser) {
-        const userData = JSON.parse(currentUser);
+      if (currentJobSeeker) {
+        const userData = JSON.parse(currentJobSeeker);
         setUsername(userData.fullName || userData.email || "User");
       } else if (currentRecruiter) {
         const recruiterData = JSON.parse(currentRecruiter);
@@ -72,7 +72,7 @@ const Navbar = () => {
   
   const handleLogout = () => {
     // Clear user data from localStorage
-    localStorage.removeItem("currentUser");
+    localStorage.removeItem("currentJobSeeker");
     localStorage.removeItem("currentRecruiter");
     setIsLoggedIn(false);
     setUsername("");
@@ -120,6 +120,7 @@ const Navbar = () => {
     icon: <Building className="w-4 h-4 mr-1" />,
     dropdown: [
       { name: "Recruiter Login", href: "/auth/recruiter/login", icon: <User className="w-4 h-4" /> },
+      { name: "Job Seeker Login", href: "/auth/jobseeker/login", icon: <User className="w-4 h-4" /> },
       { name: "Recruiter Register", href: "/auth/recruiter/register", icon: <User className="w-4 h-4" /> }, // Consider a different icon like UserPlus
       { name: "Recruiter Dashboard", href: "/dashboard/recruiter", icon: <LayoutDashboard className="w-4 h-4" /> },
     ]

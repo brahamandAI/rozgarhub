@@ -174,15 +174,15 @@ export default function RecruiterDashboardPage() {
               </p>
               <ul className="space-y-2 text-sm text-slate-300">
                 <li className="flex items-start">
-                  <span className="inline-block w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
+                  <span className="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">1</span>
                   <span>Complete your company profile</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="inline-block w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
+                  <span className="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">2</span>
                   <span>Post your first job</span>
                 </li>
                 <li className="flex items-start">
-                  <span className="inline-block w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
+                  <span className="w-5 h-5 rounded-full bg-purple-500 text-white flex items-center justify-center text-xs mr-2 mt-0.5">3</span>
                   <span>Browse potential candidates</span>
                 </li>
               </ul>
@@ -218,7 +218,14 @@ export default function RecruiterDashboardPage() {
                     <div key={job.id} className="bg-slate-700 p-4 rounded-md flex justify-between items-center">
                       <div>
                         <h3 className="font-semibold text-white">{job.title}</h3>
-                        <p className="text-xs text-slate-400">Posted {job.postedDate} - {job.applicantsCount} Applicants</p>
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center">
+                            <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="ml-2 text-sm text-gray-400">Posted {job.postedDate} - {job.applicantsCount} Applicants</span>
+                          </div>
+                        </div>
                       </div>
                       <Link href={`/dashboard/recruiter/jobs/${job.id}`} className="text-sm text-purple-400 hover:text-purple-300">
                         Manage

@@ -27,6 +27,7 @@ const Footer = () => {
       links: [
         { name: "Post a Job", href: "/auth/recruiter/login" },
         { name: "Browse Candidates", href: "/auth/recruiter/login" },
+        { name: "Find Jobs", href: "/auth/jobseeker/login" },
         { name: "Pricing Plans", href: "/example/pricing" },
         { name: "Recruiting Solutions", href: "/example/solutions" },
         { name: "Advertise with Us", href: "/example/advertise" },

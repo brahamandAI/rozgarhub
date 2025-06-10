@@ -9,6 +9,10 @@ import { useRouter } from "next/navigation";
 export default function RecruiterRegisterPage() {
   const router = useRouter();
   
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  
   // Personal Details
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -114,59 +118,70 @@ export default function RecruiterRegisterPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
     // Validate inputs before submission
     if (emailError || companyWebsiteError || passwordError) {
-      alert("Please fix the errors before submitting");
-      return;
+        throw new Error("Please fix the errors before submitting");
     }
     
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+        throw new Error("Passwords do not match!");
+      }
+
+      if (!agreeToTerms) {
+        throw new Error("Please agree to the terms and conditions");
     }
     
-    // Create company data object
-    const companyData = {
-      id: Date.now(), // Use timestamp as temporary ID
-      name: companyName,
+      // Create recruiter data object
+      const recruiterData = {
+        email,
+        password,
+        fullName,
+        phone,
+        position: jobTitle,
+        companyName,
+        companySize,
       industry: companyIndustry,
-      location: `${city}, ${state}, ${country}`,
-      description: companyDescription,
       website: companyWebsite,
-      jobCount: 0,
-      // In a real app, we would upload the logo to a server
-      // and store the URL, but for now we just note if it exists
-      hasLogo: !!companyLogo
+        city,
+        state,
+        country,
+        companyDescription,
     };
     
-    // Store company data in localStorage (in a real app this would be sent to a backend API)
-    const existingCompanies = JSON.parse(localStorage.getItem('companies') || '[]');
-    existingCompanies.push(companyData);
-    localStorage.setItem('companies', JSON.stringify(existingCompanies));
-    
-    // Store recruiter data (this would normally go to an authentication service)
-    const recruiterData = {
-      fullName,
-      email,
-      phone,
-      jobTitle,
-      companyId: companyData.id
-    };
-    localStorage.setItem('currentRecruiter', JSON.stringify(recruiterData));
-    
-    // NOTE: Here we would save the company details to the database
-    // and make it available in the companies section
-    // In a real application, this would be handled by an API call
-    // The registered company would then appear in the /companies page
-    // with the information provided in the registration form
+      // Send data to API
+      const response = await fetch("/api/auth/recruiter/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(recruiterData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      // Store user data in localStorage
+      localStorage.setItem('currentRecruiter', JSON.stringify(data.user));
     
     // Set first login flag to true to show empty dashboard initially
     sessionStorage.setItem("firstLogin", "true");
     
     // Redirect to recruiter dashboard
     router.push("/dashboard/recruiter");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Registration failed");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Navigate between sections
@@ -193,6 +208,12 @@ export default function RecruiterRegisterPage() {
               Join RozgarHub to find the best talent for your company.
             </p>
           </div>
+
+          {error && (
+            <div className="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-md text-sm mb-4">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Section Progress Indicator */}
@@ -613,10 +634,21 @@ export default function RecruiterRegisterPage() {
                   </button>
                   <button
                     type="submit"
-                    disabled={!agreeToTerms}
-                    className={`w-1/2 font-semibold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors duration-150 ${agreeToTerms ? 'bg-white text-slate-900 hover:bg-slate-200 focus:ring-white' : 'bg-slate-600 text-slate-400 cursor-not-allowed'}`}
+                    disabled={!agreeToTerms || isLoading}
+                    className={`w-1/2 font-semibold py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 transition-colors duration-150 ${
+                      agreeToTerms && !isLoading
+                        ? 'bg-white text-slate-900 hover:bg-slate-200 focus:ring-white'
+                        : 'bg-slate-600 text-slate-400 cursor-not-allowed'
+                    }`}
                   >
-                    Create Account
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Creating Account...
+                      </div>
+                    ) : (
+                      'Create Account'
+                    )}
                   </button>
                 </div>
               </div>

@@ -18,6 +18,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  * 
  */
 export type JobSeeker = $Result.DefaultSelection<Prisma.$JobSeekerPayload>
+/**
+ * Model Recruiter
+ * 
+ */
+export type Recruiter = $Result.DefaultSelection<Prisma.$RecruiterPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -120,6 +125,16 @@ export class PrismaClient<
     * ```
     */
   get jobSeeker(): Prisma.JobSeekerDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recruiter`: Exposes CRUD operations for the **Recruiter** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Recruiters
+    * const recruiters = await prisma.recruiter.findMany()
+    * ```
+    */
+  get recruiter(): Prisma.RecruiterDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -560,7 +575,8 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    JobSeeker: 'JobSeeker'
+    JobSeeker: 'JobSeeker',
+    Recruiter: 'Recruiter'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -579,7 +595,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "jobSeeker"
+      modelProps: "jobSeeker" | "recruiter"
       txIsolationLevel: never
     }
     model: {
@@ -657,6 +673,80 @@ export namespace Prisma {
           }
         }
       }
+      Recruiter: {
+        payload: Prisma.$RecruiterPayload<ExtArgs>
+        fields: Prisma.RecruiterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecruiterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecruiterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          findFirst: {
+            args: Prisma.RecruiterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecruiterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          findMany: {
+            args: Prisma.RecruiterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>[]
+          }
+          create: {
+            args: Prisma.RecruiterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          createMany: {
+            args: Prisma.RecruiterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.RecruiterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          update: {
+            args: Prisma.RecruiterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          deleteMany: {
+            args: Prisma.RecruiterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecruiterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.RecruiterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecruiterPayload>
+          }
+          aggregate: {
+            args: Prisma.RecruiterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecruiter>
+          }
+          groupBy: {
+            args: Prisma.RecruiterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecruiterGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.RecruiterFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.RecruiterAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.RecruiterCountArgs<ExtArgs>
+            result: $Utils.Optional<RecruiterCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -729,6 +819,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     jobSeeker?: JobSeekerOmit
+    recruiter?: RecruiterOmit
   }
 
   /* Types for Logging */
@@ -2004,6 +2095,1168 @@ export namespace Prisma {
 
 
   /**
+   * Model Recruiter
+   */
+
+  export type AggregateRecruiter = {
+    _count: RecruiterCountAggregateOutputType | null
+    _min: RecruiterMinAggregateOutputType | null
+    _max: RecruiterMaxAggregateOutputType | null
+  }
+
+  export type RecruiterMinAggregateOutputType = {
+    id: string | null
+    email: string | null
+    password: string | null
+    companyName: string | null
+    fullName: string | null
+    phone: string | null
+    position: string | null
+    companySize: string | null
+    industry: string | null
+    website: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    isActive: boolean | null
+    lastLogin: Date | null
+    profileComplete: boolean | null
+    emailVerified: boolean | null
+    phoneVerified: boolean | null
+    bio: string | null
+    linkedinUrl: string | null
+    companyDescription: string | null
+    companyLogo: string | null
+  }
+
+  export type RecruiterMaxAggregateOutputType = {
+    id: string | null
+    email: string | null
+    password: string | null
+    companyName: string | null
+    fullName: string | null
+    phone: string | null
+    position: string | null
+    companySize: string | null
+    industry: string | null
+    website: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+    isActive: boolean | null
+    lastLogin: Date | null
+    profileComplete: boolean | null
+    emailVerified: boolean | null
+    phoneVerified: boolean | null
+    bio: string | null
+    linkedinUrl: string | null
+    companyDescription: string | null
+    companyLogo: string | null
+  }
+
+  export type RecruiterCountAggregateOutputType = {
+    id: number
+    email: number
+    password: number
+    companyName: number
+    fullName: number
+    phone: number
+    position: number
+    companySize: number
+    industry: number
+    website: number
+    city: number
+    state: number
+    country: number
+    createdAt: number
+    updatedAt: number
+    isActive: number
+    lastLogin: number
+    profileComplete: number
+    emailVerified: number
+    phoneVerified: number
+    bio: number
+    linkedinUrl: number
+    companyDescription: number
+    companyLogo: number
+    companyBenefits: number
+    hiringNeeds: number
+    preferredLocations: number
+    _all: number
+  }
+
+
+  export type RecruiterMinAggregateInputType = {
+    id?: true
+    email?: true
+    password?: true
+    companyName?: true
+    fullName?: true
+    phone?: true
+    position?: true
+    companySize?: true
+    industry?: true
+    website?: true
+    city?: true
+    state?: true
+    country?: true
+    createdAt?: true
+    updatedAt?: true
+    isActive?: true
+    lastLogin?: true
+    profileComplete?: true
+    emailVerified?: true
+    phoneVerified?: true
+    bio?: true
+    linkedinUrl?: true
+    companyDescription?: true
+    companyLogo?: true
+  }
+
+  export type RecruiterMaxAggregateInputType = {
+    id?: true
+    email?: true
+    password?: true
+    companyName?: true
+    fullName?: true
+    phone?: true
+    position?: true
+    companySize?: true
+    industry?: true
+    website?: true
+    city?: true
+    state?: true
+    country?: true
+    createdAt?: true
+    updatedAt?: true
+    isActive?: true
+    lastLogin?: true
+    profileComplete?: true
+    emailVerified?: true
+    phoneVerified?: true
+    bio?: true
+    linkedinUrl?: true
+    companyDescription?: true
+    companyLogo?: true
+  }
+
+  export type RecruiterCountAggregateInputType = {
+    id?: true
+    email?: true
+    password?: true
+    companyName?: true
+    fullName?: true
+    phone?: true
+    position?: true
+    companySize?: true
+    industry?: true
+    website?: true
+    city?: true
+    state?: true
+    country?: true
+    createdAt?: true
+    updatedAt?: true
+    isActive?: true
+    lastLogin?: true
+    profileComplete?: true
+    emailVerified?: true
+    phoneVerified?: true
+    bio?: true
+    linkedinUrl?: true
+    companyDescription?: true
+    companyLogo?: true
+    companyBenefits?: true
+    hiringNeeds?: true
+    preferredLocations?: true
+    _all?: true
+  }
+
+  export type RecruiterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recruiter to aggregate.
+     */
+    where?: RecruiterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recruiters to fetch.
+     */
+    orderBy?: RecruiterOrderByWithRelationInput | RecruiterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecruiterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recruiters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recruiters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Recruiters
+    **/
+    _count?: true | RecruiterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecruiterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecruiterMaxAggregateInputType
+  }
+
+  export type GetRecruiterAggregateType<T extends RecruiterAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecruiter]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecruiter[P]>
+      : GetScalarType<T[P], AggregateRecruiter[P]>
+  }
+
+
+
+
+  export type RecruiterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecruiterWhereInput
+    orderBy?: RecruiterOrderByWithAggregationInput | RecruiterOrderByWithAggregationInput[]
+    by: RecruiterScalarFieldEnum[] | RecruiterScalarFieldEnum
+    having?: RecruiterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecruiterCountAggregateInputType | true
+    _min?: RecruiterMinAggregateInputType
+    _max?: RecruiterMaxAggregateInputType
+  }
+
+  export type RecruiterGroupByOutputType = {
+    id: string
+    email: string
+    password: string
+    companyName: string
+    fullName: string
+    phone: string | null
+    position: string | null
+    companySize: string | null
+    industry: string | null
+    website: string | null
+    city: string | null
+    state: string | null
+    country: string | null
+    createdAt: Date
+    updatedAt: Date
+    isActive: boolean
+    lastLogin: Date | null
+    profileComplete: boolean
+    emailVerified: boolean
+    phoneVerified: boolean
+    bio: string | null
+    linkedinUrl: string | null
+    companyDescription: string | null
+    companyLogo: string | null
+    companyBenefits: string[]
+    hiringNeeds: string[]
+    preferredLocations: string[]
+    _count: RecruiterCountAggregateOutputType | null
+    _min: RecruiterMinAggregateOutputType | null
+    _max: RecruiterMaxAggregateOutputType | null
+  }
+
+  type GetRecruiterGroupByPayload<T extends RecruiterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecruiterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecruiterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecruiterGroupByOutputType[P]>
+            : GetScalarType<T[P], RecruiterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecruiterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    email?: boolean
+    password?: boolean
+    companyName?: boolean
+    fullName?: boolean
+    phone?: boolean
+    position?: boolean
+    companySize?: boolean
+    industry?: boolean
+    website?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    isActive?: boolean
+    lastLogin?: boolean
+    profileComplete?: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
+    bio?: boolean
+    linkedinUrl?: boolean
+    companyDescription?: boolean
+    companyLogo?: boolean
+    companyBenefits?: boolean
+    hiringNeeds?: boolean
+    preferredLocations?: boolean
+  }, ExtArgs["result"]["recruiter"]>
+
+
+
+  export type RecruiterSelectScalar = {
+    id?: boolean
+    email?: boolean
+    password?: boolean
+    companyName?: boolean
+    fullName?: boolean
+    phone?: boolean
+    position?: boolean
+    companySize?: boolean
+    industry?: boolean
+    website?: boolean
+    city?: boolean
+    state?: boolean
+    country?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    isActive?: boolean
+    lastLogin?: boolean
+    profileComplete?: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
+    bio?: boolean
+    linkedinUrl?: boolean
+    companyDescription?: boolean
+    companyLogo?: boolean
+    companyBenefits?: boolean
+    hiringNeeds?: boolean
+    preferredLocations?: boolean
+  }
+
+  export type RecruiterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "companyName" | "fullName" | "phone" | "position" | "companySize" | "industry" | "website" | "city" | "state" | "country" | "createdAt" | "updatedAt" | "isActive" | "lastLogin" | "profileComplete" | "emailVerified" | "phoneVerified" | "bio" | "linkedinUrl" | "companyDescription" | "companyLogo" | "companyBenefits" | "hiringNeeds" | "preferredLocations", ExtArgs["result"]["recruiter"]>
+
+  export type $RecruiterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Recruiter"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      email: string
+      password: string
+      companyName: string
+      fullName: string
+      phone: string | null
+      position: string | null
+      companySize: string | null
+      industry: string | null
+      website: string | null
+      city: string | null
+      state: string | null
+      country: string | null
+      createdAt: Date
+      updatedAt: Date
+      isActive: boolean
+      lastLogin: Date | null
+      profileComplete: boolean
+      emailVerified: boolean
+      phoneVerified: boolean
+      bio: string | null
+      linkedinUrl: string | null
+      companyDescription: string | null
+      companyLogo: string | null
+      companyBenefits: string[]
+      hiringNeeds: string[]
+      preferredLocations: string[]
+    }, ExtArgs["result"]["recruiter"]>
+    composites: {}
+  }
+
+  type RecruiterGetPayload<S extends boolean | null | undefined | RecruiterDefaultArgs> = $Result.GetResult<Prisma.$RecruiterPayload, S>
+
+  type RecruiterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecruiterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecruiterCountAggregateInputType | true
+    }
+
+  export interface RecruiterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Recruiter'], meta: { name: 'Recruiter' } }
+    /**
+     * Find zero or one Recruiter that matches the filter.
+     * @param {RecruiterFindUniqueArgs} args - Arguments to find a Recruiter
+     * @example
+     * // Get one Recruiter
+     * const recruiter = await prisma.recruiter.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecruiterFindUniqueArgs>(args: SelectSubset<T, RecruiterFindUniqueArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Recruiter that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecruiterFindUniqueOrThrowArgs} args - Arguments to find a Recruiter
+     * @example
+     * // Get one Recruiter
+     * const recruiter = await prisma.recruiter.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecruiterFindUniqueOrThrowArgs>(args: SelectSubset<T, RecruiterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recruiter that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterFindFirstArgs} args - Arguments to find a Recruiter
+     * @example
+     * // Get one Recruiter
+     * const recruiter = await prisma.recruiter.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecruiterFindFirstArgs>(args?: SelectSubset<T, RecruiterFindFirstArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Recruiter that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterFindFirstOrThrowArgs} args - Arguments to find a Recruiter
+     * @example
+     * // Get one Recruiter
+     * const recruiter = await prisma.recruiter.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecruiterFindFirstOrThrowArgs>(args?: SelectSubset<T, RecruiterFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Recruiters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Recruiters
+     * const recruiters = await prisma.recruiter.findMany()
+     * 
+     * // Get first 10 Recruiters
+     * const recruiters = await prisma.recruiter.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recruiterWithIdOnly = await prisma.recruiter.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecruiterFindManyArgs>(args?: SelectSubset<T, RecruiterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Recruiter.
+     * @param {RecruiterCreateArgs} args - Arguments to create a Recruiter.
+     * @example
+     * // Create one Recruiter
+     * const Recruiter = await prisma.recruiter.create({
+     *   data: {
+     *     // ... data to create a Recruiter
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecruiterCreateArgs>(args: SelectSubset<T, RecruiterCreateArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Recruiters.
+     * @param {RecruiterCreateManyArgs} args - Arguments to create many Recruiters.
+     * @example
+     * // Create many Recruiters
+     * const recruiter = await prisma.recruiter.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecruiterCreateManyArgs>(args?: SelectSubset<T, RecruiterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Recruiter.
+     * @param {RecruiterDeleteArgs} args - Arguments to delete one Recruiter.
+     * @example
+     * // Delete one Recruiter
+     * const Recruiter = await prisma.recruiter.delete({
+     *   where: {
+     *     // ... filter to delete one Recruiter
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecruiterDeleteArgs>(args: SelectSubset<T, RecruiterDeleteArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Recruiter.
+     * @param {RecruiterUpdateArgs} args - Arguments to update one Recruiter.
+     * @example
+     * // Update one Recruiter
+     * const recruiter = await prisma.recruiter.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecruiterUpdateArgs>(args: SelectSubset<T, RecruiterUpdateArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Recruiters.
+     * @param {RecruiterDeleteManyArgs} args - Arguments to filter Recruiters to delete.
+     * @example
+     * // Delete a few Recruiters
+     * const { count } = await prisma.recruiter.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecruiterDeleteManyArgs>(args?: SelectSubset<T, RecruiterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Recruiters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Recruiters
+     * const recruiter = await prisma.recruiter.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecruiterUpdateManyArgs>(args: SelectSubset<T, RecruiterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Recruiter.
+     * @param {RecruiterUpsertArgs} args - Arguments to update or create a Recruiter.
+     * @example
+     * // Update or create a Recruiter
+     * const recruiter = await prisma.recruiter.upsert({
+     *   create: {
+     *     // ... data to create a Recruiter
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Recruiter we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecruiterUpsertArgs>(args: SelectSubset<T, RecruiterUpsertArgs<ExtArgs>>): Prisma__RecruiterClient<$Result.GetResult<Prisma.$RecruiterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Recruiters that matches the filter.
+     * @param {RecruiterFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const recruiter = await prisma.recruiter.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: RecruiterFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Recruiter.
+     * @param {RecruiterAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const recruiter = await prisma.recruiter.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: RecruiterAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Recruiters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterCountArgs} args - Arguments to filter Recruiters to count.
+     * @example
+     * // Count the number of Recruiters
+     * const count = await prisma.recruiter.count({
+     *   where: {
+     *     // ... the filter for the Recruiters we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecruiterCountArgs>(
+      args?: Subset<T, RecruiterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecruiterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Recruiter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecruiterAggregateArgs>(args: Subset<T, RecruiterAggregateArgs>): Prisma.PrismaPromise<GetRecruiterAggregateType<T>>
+
+    /**
+     * Group by Recruiter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecruiterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecruiterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecruiterGroupByArgs['orderBy'] }
+        : { orderBy?: RecruiterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecruiterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecruiterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Recruiter model
+   */
+  readonly fields: RecruiterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Recruiter.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecruiterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Recruiter model
+   */
+  interface RecruiterFieldRefs {
+    readonly id: FieldRef<"Recruiter", 'String'>
+    readonly email: FieldRef<"Recruiter", 'String'>
+    readonly password: FieldRef<"Recruiter", 'String'>
+    readonly companyName: FieldRef<"Recruiter", 'String'>
+    readonly fullName: FieldRef<"Recruiter", 'String'>
+    readonly phone: FieldRef<"Recruiter", 'String'>
+    readonly position: FieldRef<"Recruiter", 'String'>
+    readonly companySize: FieldRef<"Recruiter", 'String'>
+    readonly industry: FieldRef<"Recruiter", 'String'>
+    readonly website: FieldRef<"Recruiter", 'String'>
+    readonly city: FieldRef<"Recruiter", 'String'>
+    readonly state: FieldRef<"Recruiter", 'String'>
+    readonly country: FieldRef<"Recruiter", 'String'>
+    readonly createdAt: FieldRef<"Recruiter", 'DateTime'>
+    readonly updatedAt: FieldRef<"Recruiter", 'DateTime'>
+    readonly isActive: FieldRef<"Recruiter", 'Boolean'>
+    readonly lastLogin: FieldRef<"Recruiter", 'DateTime'>
+    readonly profileComplete: FieldRef<"Recruiter", 'Boolean'>
+    readonly emailVerified: FieldRef<"Recruiter", 'Boolean'>
+    readonly phoneVerified: FieldRef<"Recruiter", 'Boolean'>
+    readonly bio: FieldRef<"Recruiter", 'String'>
+    readonly linkedinUrl: FieldRef<"Recruiter", 'String'>
+    readonly companyDescription: FieldRef<"Recruiter", 'String'>
+    readonly companyLogo: FieldRef<"Recruiter", 'String'>
+    readonly companyBenefits: FieldRef<"Recruiter", 'String[]'>
+    readonly hiringNeeds: FieldRef<"Recruiter", 'String[]'>
+    readonly preferredLocations: FieldRef<"Recruiter", 'String[]'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Recruiter findUnique
+   */
+  export type RecruiterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter, which Recruiter to fetch.
+     */
+    where: RecruiterWhereUniqueInput
+  }
+
+  /**
+   * Recruiter findUniqueOrThrow
+   */
+  export type RecruiterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter, which Recruiter to fetch.
+     */
+    where: RecruiterWhereUniqueInput
+  }
+
+  /**
+   * Recruiter findFirst
+   */
+  export type RecruiterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter, which Recruiter to fetch.
+     */
+    where?: RecruiterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recruiters to fetch.
+     */
+    orderBy?: RecruiterOrderByWithRelationInput | RecruiterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recruiters.
+     */
+    cursor?: RecruiterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recruiters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recruiters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recruiters.
+     */
+    distinct?: RecruiterScalarFieldEnum | RecruiterScalarFieldEnum[]
+  }
+
+  /**
+   * Recruiter findFirstOrThrow
+   */
+  export type RecruiterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter, which Recruiter to fetch.
+     */
+    where?: RecruiterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recruiters to fetch.
+     */
+    orderBy?: RecruiterOrderByWithRelationInput | RecruiterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Recruiters.
+     */
+    cursor?: RecruiterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recruiters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recruiters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Recruiters.
+     */
+    distinct?: RecruiterScalarFieldEnum | RecruiterScalarFieldEnum[]
+  }
+
+  /**
+   * Recruiter findMany
+   */
+  export type RecruiterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter, which Recruiters to fetch.
+     */
+    where?: RecruiterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Recruiters to fetch.
+     */
+    orderBy?: RecruiterOrderByWithRelationInput | RecruiterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Recruiters.
+     */
+    cursor?: RecruiterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Recruiters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Recruiters.
+     */
+    skip?: number
+    distinct?: RecruiterScalarFieldEnum | RecruiterScalarFieldEnum[]
+  }
+
+  /**
+   * Recruiter create
+   */
+  export type RecruiterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Recruiter.
+     */
+    data: XOR<RecruiterCreateInput, RecruiterUncheckedCreateInput>
+  }
+
+  /**
+   * Recruiter createMany
+   */
+  export type RecruiterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Recruiters.
+     */
+    data: RecruiterCreateManyInput | RecruiterCreateManyInput[]
+  }
+
+  /**
+   * Recruiter update
+   */
+  export type RecruiterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Recruiter.
+     */
+    data: XOR<RecruiterUpdateInput, RecruiterUncheckedUpdateInput>
+    /**
+     * Choose, which Recruiter to update.
+     */
+    where: RecruiterWhereUniqueInput
+  }
+
+  /**
+   * Recruiter updateMany
+   */
+  export type RecruiterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Recruiters.
+     */
+    data: XOR<RecruiterUpdateManyMutationInput, RecruiterUncheckedUpdateManyInput>
+    /**
+     * Filter which Recruiters to update
+     */
+    where?: RecruiterWhereInput
+    /**
+     * Limit how many Recruiters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recruiter upsert
+   */
+  export type RecruiterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Recruiter to update in case it exists.
+     */
+    where: RecruiterWhereUniqueInput
+    /**
+     * In case the Recruiter found by the `where` argument doesn't exist, create a new Recruiter with this data.
+     */
+    create: XOR<RecruiterCreateInput, RecruiterUncheckedCreateInput>
+    /**
+     * In case the Recruiter was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecruiterUpdateInput, RecruiterUncheckedUpdateInput>
+  }
+
+  /**
+   * Recruiter delete
+   */
+  export type RecruiterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+    /**
+     * Filter which Recruiter to delete.
+     */
+    where: RecruiterWhereUniqueInput
+  }
+
+  /**
+   * Recruiter deleteMany
+   */
+  export type RecruiterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Recruiters to delete
+     */
+    where?: RecruiterWhereInput
+    /**
+     * Limit how many Recruiters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Recruiter findRaw
+   */
+  export type RecruiterFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Recruiter aggregateRaw
+   */
+  export type RecruiterAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Recruiter without action
+   */
+  export type RecruiterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Recruiter
+     */
+    select?: RecruiterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Recruiter
+     */
+    omit?: RecruiterOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -2040,6 +3293,39 @@ export namespace Prisma {
   };
 
   export type JobSeekerScalarFieldEnum = (typeof JobSeekerScalarFieldEnum)[keyof typeof JobSeekerScalarFieldEnum]
+
+
+  export const RecruiterScalarFieldEnum: {
+    id: 'id',
+    email: 'email',
+    password: 'password',
+    companyName: 'companyName',
+    fullName: 'fullName',
+    phone: 'phone',
+    position: 'position',
+    companySize: 'companySize',
+    industry: 'industry',
+    website: 'website',
+    city: 'city',
+    state: 'state',
+    country: 'country',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt',
+    isActive: 'isActive',
+    lastLogin: 'lastLogin',
+    profileComplete: 'profileComplete',
+    emailVerified: 'emailVerified',
+    phoneVerified: 'phoneVerified',
+    bio: 'bio',
+    linkedinUrl: 'linkedinUrl',
+    companyDescription: 'companyDescription',
+    companyLogo: 'companyLogo',
+    companyBenefits: 'companyBenefits',
+    hiringNeeds: 'hiringNeeds',
+    preferredLocations: 'preferredLocations'
+  };
+
+  export type RecruiterScalarFieldEnum = (typeof RecruiterScalarFieldEnum)[keyof typeof RecruiterScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -2287,6 +3573,168 @@ export namespace Prisma {
     certifications?: StringNullableListFilter<"JobSeeker">
   }
 
+  export type RecruiterWhereInput = {
+    AND?: RecruiterWhereInput | RecruiterWhereInput[]
+    OR?: RecruiterWhereInput[]
+    NOT?: RecruiterWhereInput | RecruiterWhereInput[]
+    id?: StringFilter<"Recruiter"> | string
+    email?: StringFilter<"Recruiter"> | string
+    password?: StringFilter<"Recruiter"> | string
+    companyName?: StringFilter<"Recruiter"> | string
+    fullName?: StringFilter<"Recruiter"> | string
+    phone?: StringNullableFilter<"Recruiter"> | string | null
+    position?: StringNullableFilter<"Recruiter"> | string | null
+    companySize?: StringNullableFilter<"Recruiter"> | string | null
+    industry?: StringNullableFilter<"Recruiter"> | string | null
+    website?: StringNullableFilter<"Recruiter"> | string | null
+    city?: StringNullableFilter<"Recruiter"> | string | null
+    state?: StringNullableFilter<"Recruiter"> | string | null
+    country?: StringNullableFilter<"Recruiter"> | string | null
+    createdAt?: DateTimeFilter<"Recruiter"> | Date | string
+    updatedAt?: DateTimeFilter<"Recruiter"> | Date | string
+    isActive?: BoolFilter<"Recruiter"> | boolean
+    lastLogin?: DateTimeNullableFilter<"Recruiter"> | Date | string | null
+    profileComplete?: BoolFilter<"Recruiter"> | boolean
+    emailVerified?: BoolFilter<"Recruiter"> | boolean
+    phoneVerified?: BoolFilter<"Recruiter"> | boolean
+    bio?: StringNullableFilter<"Recruiter"> | string | null
+    linkedinUrl?: StringNullableFilter<"Recruiter"> | string | null
+    companyDescription?: StringNullableFilter<"Recruiter"> | string | null
+    companyLogo?: StringNullableFilter<"Recruiter"> | string | null
+    companyBenefits?: StringNullableListFilter<"Recruiter">
+    hiringNeeds?: StringNullableListFilter<"Recruiter">
+    preferredLocations?: StringNullableListFilter<"Recruiter">
+  }
+
+  export type RecruiterOrderByWithRelationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    companyName?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    position?: SortOrder
+    companySize?: SortOrder
+    industry?: SortOrder
+    website?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    isActive?: SortOrder
+    lastLogin?: SortOrder
+    profileComplete?: SortOrder
+    emailVerified?: SortOrder
+    phoneVerified?: SortOrder
+    bio?: SortOrder
+    linkedinUrl?: SortOrder
+    companyDescription?: SortOrder
+    companyLogo?: SortOrder
+    companyBenefits?: SortOrder
+    hiringNeeds?: SortOrder
+    preferredLocations?: SortOrder
+  }
+
+  export type RecruiterWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    email?: string
+    AND?: RecruiterWhereInput | RecruiterWhereInput[]
+    OR?: RecruiterWhereInput[]
+    NOT?: RecruiterWhereInput | RecruiterWhereInput[]
+    password?: StringFilter<"Recruiter"> | string
+    companyName?: StringFilter<"Recruiter"> | string
+    fullName?: StringFilter<"Recruiter"> | string
+    phone?: StringNullableFilter<"Recruiter"> | string | null
+    position?: StringNullableFilter<"Recruiter"> | string | null
+    companySize?: StringNullableFilter<"Recruiter"> | string | null
+    industry?: StringNullableFilter<"Recruiter"> | string | null
+    website?: StringNullableFilter<"Recruiter"> | string | null
+    city?: StringNullableFilter<"Recruiter"> | string | null
+    state?: StringNullableFilter<"Recruiter"> | string | null
+    country?: StringNullableFilter<"Recruiter"> | string | null
+    createdAt?: DateTimeFilter<"Recruiter"> | Date | string
+    updatedAt?: DateTimeFilter<"Recruiter"> | Date | string
+    isActive?: BoolFilter<"Recruiter"> | boolean
+    lastLogin?: DateTimeNullableFilter<"Recruiter"> | Date | string | null
+    profileComplete?: BoolFilter<"Recruiter"> | boolean
+    emailVerified?: BoolFilter<"Recruiter"> | boolean
+    phoneVerified?: BoolFilter<"Recruiter"> | boolean
+    bio?: StringNullableFilter<"Recruiter"> | string | null
+    linkedinUrl?: StringNullableFilter<"Recruiter"> | string | null
+    companyDescription?: StringNullableFilter<"Recruiter"> | string | null
+    companyLogo?: StringNullableFilter<"Recruiter"> | string | null
+    companyBenefits?: StringNullableListFilter<"Recruiter">
+    hiringNeeds?: StringNullableListFilter<"Recruiter">
+    preferredLocations?: StringNullableListFilter<"Recruiter">
+  }, "id" | "email">
+
+  export type RecruiterOrderByWithAggregationInput = {
+    id?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    companyName?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    position?: SortOrder
+    companySize?: SortOrder
+    industry?: SortOrder
+    website?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    isActive?: SortOrder
+    lastLogin?: SortOrder
+    profileComplete?: SortOrder
+    emailVerified?: SortOrder
+    phoneVerified?: SortOrder
+    bio?: SortOrder
+    linkedinUrl?: SortOrder
+    companyDescription?: SortOrder
+    companyLogo?: SortOrder
+    companyBenefits?: SortOrder
+    hiringNeeds?: SortOrder
+    preferredLocations?: SortOrder
+    _count?: RecruiterCountOrderByAggregateInput
+    _max?: RecruiterMaxOrderByAggregateInput
+    _min?: RecruiterMinOrderByAggregateInput
+  }
+
+  export type RecruiterScalarWhereWithAggregatesInput = {
+    AND?: RecruiterScalarWhereWithAggregatesInput | RecruiterScalarWhereWithAggregatesInput[]
+    OR?: RecruiterScalarWhereWithAggregatesInput[]
+    NOT?: RecruiterScalarWhereWithAggregatesInput | RecruiterScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Recruiter"> | string
+    email?: StringWithAggregatesFilter<"Recruiter"> | string
+    password?: StringWithAggregatesFilter<"Recruiter"> | string
+    companyName?: StringWithAggregatesFilter<"Recruiter"> | string
+    fullName?: StringWithAggregatesFilter<"Recruiter"> | string
+    phone?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    position?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    companySize?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    industry?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    website?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    city?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    state?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    country?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Recruiter"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Recruiter"> | Date | string
+    isActive?: BoolWithAggregatesFilter<"Recruiter"> | boolean
+    lastLogin?: DateTimeNullableWithAggregatesFilter<"Recruiter"> | Date | string | null
+    profileComplete?: BoolWithAggregatesFilter<"Recruiter"> | boolean
+    emailVerified?: BoolWithAggregatesFilter<"Recruiter"> | boolean
+    phoneVerified?: BoolWithAggregatesFilter<"Recruiter"> | boolean
+    bio?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    linkedinUrl?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    companyDescription?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    companyLogo?: StringNullableWithAggregatesFilter<"Recruiter"> | string | null
+    companyBenefits?: StringNullableListFilter<"Recruiter">
+    hiringNeeds?: StringNullableListFilter<"Recruiter">
+    preferredLocations?: StringNullableListFilter<"Recruiter">
+  }
+
   export type JobSeekerCreateInput = {
     id?: string
     email: string
@@ -2505,6 +3953,212 @@ export namespace Prisma {
     noticePeriod?: NullableStringFieldUpdateOperationsInput | string | null
     languages?: JobSeekerUpdatelanguagesInput | string[]
     certifications?: JobSeekerUpdatecertificationsInput | string[]
+  }
+
+  export type RecruiterCreateInput = {
+    id?: string
+    email: string
+    password: string
+    companyName: string
+    fullName: string
+    phone?: string | null
+    position?: string | null
+    companySize?: string | null
+    industry?: string | null
+    website?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    profileComplete?: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
+    bio?: string | null
+    linkedinUrl?: string | null
+    companyDescription?: string | null
+    companyLogo?: string | null
+    companyBenefits?: RecruiterCreatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterCreatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterCreatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterUncheckedCreateInput = {
+    id?: string
+    email: string
+    password: string
+    companyName: string
+    fullName: string
+    phone?: string | null
+    position?: string | null
+    companySize?: string | null
+    industry?: string | null
+    website?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    profileComplete?: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
+    bio?: string | null
+    linkedinUrl?: string | null
+    companyDescription?: string | null
+    companyLogo?: string | null
+    companyBenefits?: RecruiterCreatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterCreatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterCreatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileComplete?: BoolFieldUpdateOperationsInput | boolean
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    companyDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBenefits?: RecruiterUpdatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterUpdatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterUpdatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterUncheckedUpdateInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileComplete?: BoolFieldUpdateOperationsInput | boolean
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    companyDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBenefits?: RecruiterUpdatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterUpdatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterUpdatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterCreateManyInput = {
+    id?: string
+    email: string
+    password: string
+    companyName: string
+    fullName: string
+    phone?: string | null
+    position?: string | null
+    companySize?: string | null
+    industry?: string | null
+    website?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    profileComplete?: boolean
+    emailVerified?: boolean
+    phoneVerified?: boolean
+    bio?: string | null
+    linkedinUrl?: string | null
+    companyDescription?: string | null
+    companyLogo?: string | null
+    companyBenefits?: RecruiterCreatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterCreatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterCreatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterUpdateManyMutationInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileComplete?: BoolFieldUpdateOperationsInput | boolean
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    companyDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBenefits?: RecruiterUpdatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterUpdatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterUpdatepreferredLocationsInput | string[]
+  }
+
+  export type RecruiterUncheckedUpdateManyInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    fullName?: StringFieldUpdateOperationsInput | string
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    position?: NullableStringFieldUpdateOperationsInput | string | null
+    companySize?: NullableStringFieldUpdateOperationsInput | string | null
+    industry?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    profileComplete?: BoolFieldUpdateOperationsInput | boolean
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    phoneVerified?: BoolFieldUpdateOperationsInput | boolean
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    linkedinUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    companyDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    companyLogo?: NullableStringFieldUpdateOperationsInput | string | null
+    companyBenefits?: RecruiterUpdatecompanyBenefitsInput | string[]
+    hiringNeeds?: RecruiterUpdatehiringNeedsInput | string[]
+    preferredLocations?: RecruiterUpdatepreferredLocationsInput | string[]
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2736,6 +4390,90 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type RecruiterCountOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    companyName?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    position?: SortOrder
+    companySize?: SortOrder
+    industry?: SortOrder
+    website?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    isActive?: SortOrder
+    lastLogin?: SortOrder
+    profileComplete?: SortOrder
+    emailVerified?: SortOrder
+    phoneVerified?: SortOrder
+    bio?: SortOrder
+    linkedinUrl?: SortOrder
+    companyDescription?: SortOrder
+    companyLogo?: SortOrder
+    companyBenefits?: SortOrder
+    hiringNeeds?: SortOrder
+    preferredLocations?: SortOrder
+  }
+
+  export type RecruiterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    companyName?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    position?: SortOrder
+    companySize?: SortOrder
+    industry?: SortOrder
+    website?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    isActive?: SortOrder
+    lastLogin?: SortOrder
+    profileComplete?: SortOrder
+    emailVerified?: SortOrder
+    phoneVerified?: SortOrder
+    bio?: SortOrder
+    linkedinUrl?: SortOrder
+    companyDescription?: SortOrder
+    companyLogo?: SortOrder
+  }
+
+  export type RecruiterMinOrderByAggregateInput = {
+    id?: SortOrder
+    email?: SortOrder
+    password?: SortOrder
+    companyName?: SortOrder
+    fullName?: SortOrder
+    phone?: SortOrder
+    position?: SortOrder
+    companySize?: SortOrder
+    industry?: SortOrder
+    website?: SortOrder
+    city?: SortOrder
+    state?: SortOrder
+    country?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    isActive?: SortOrder
+    lastLogin?: SortOrder
+    profileComplete?: SortOrder
+    emailVerified?: SortOrder
+    phoneVerified?: SortOrder
+    bio?: SortOrder
+    linkedinUrl?: SortOrder
+    companyDescription?: SortOrder
+    companyLogo?: SortOrder
+  }
+
   export type JobSeekerCreateskillsInput = {
     set: string[]
   }
@@ -2790,6 +4528,33 @@ export namespace Prisma {
   }
 
   export type JobSeekerUpdatecertificationsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type RecruiterCreatecompanyBenefitsInput = {
+    set: string[]
+  }
+
+  export type RecruiterCreatehiringNeedsInput = {
+    set: string[]
+  }
+
+  export type RecruiterCreatepreferredLocationsInput = {
+    set: string[]
+  }
+
+  export type RecruiterUpdatecompanyBenefitsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type RecruiterUpdatehiringNeedsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type RecruiterUpdatepreferredLocationsInput = {
     set?: string[]
     push?: string | string[]
   }

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Briefcase, Users, BarChart3, Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function RecruiterLoginPage() {
   const router = useRouter();
@@ -12,63 +13,59 @@ export default function RecruiterLoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log({ email, password, rememberMe });
-    
-    // Find recruiter in localStorage based on email
-    let foundRecruiter = null;
+    setIsLoading(true);
+
     try {
-      const recruiters = JSON.parse(localStorage.getItem('allRecruiters') || '[]');
-      foundRecruiter = recruiters.find((r: any) => r.email === email);
-      
-      if (!foundRecruiter) {
-        // For demo purposes, create a mock recruiter if none exists
-        foundRecruiter = {
-          email: email,
-          fullName: email.split('@')[0],
-          companyId: null
-        };
-        
-        // Try to find matching company data
-        const companies = JSON.parse(localStorage.getItem('companies') || '[]');
-        if (companies.length > 0) {
-          // Just assign first company for demo
-          foundRecruiter.companyId = companies[0].id;
-        }
+      const response = await fetch("/api/auth/recruiter/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
       }
+
+      // Store user data in localStorage
+      localStorage.setItem('currentRecruiter', JSON.stringify(data.user));
       
-      // Save recruiter data in localStorage
-      localStorage.setItem('currentRecruiter', JSON.stringify(foundRecruiter));
-      
-      // Set first login flag to show empty dashboard initially
-      sessionStorage.setItem("firstLogin", "true");
+      // Update last login time
+      await fetch("/api/auth/recruiter/update-last-login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      toast.success("Login successful!");
+      router.push("/dashboard/recruiter");
     } catch (error) {
-      console.error("Error processing recruiter data:", error);
+      toast.error(error instanceof Error ? error.message : "Login failed");
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Redirect to recruiter dashboard
-    router.push("/dashboard/recruiter");
   };
   
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic here
-    console.log("Sign in with Google");
-    
-    // For demo, create a sample recruiter
-    const sampleRecruiter = {
-      email: "google-recruiter@example.com",
-      fullName: "Google Recruiter",
-      companyId: null
-    };
-    
-    // Save recruiter data
-    localStorage.setItem('currentRecruiter', JSON.stringify(sampleRecruiter));
-    
-    // Redirect to recruiter dashboard after successful sign-in
-    router.push("/dashboard/recruiter");
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      // Implement Google OAuth login here
+      // This is a placeholder for the actual Google OAuth implementation
+      toast.error("Google sign-in is not implemented yet");
+    } catch (error) {
+      toast.error("Google sign-in failed");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -79,7 +76,7 @@ export default function RecruiterLoginPage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2 text-white">Recruiter Login</h1>
             <p className="text-slate-400 text-sm">
-              Sign in to access your recruiter dashboard and manage your job listings.
+              Sign in to access your recruiter dashboard and manage job postings.
             </p>
           </div>
 
@@ -96,20 +93,14 @@ export default function RecruiterLoginPage() {
                 required
                 className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors"
                 placeholder="Enter your email"
+                disabled={isLoading}
               />
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <label htmlFor="password" className="block text-sm font-medium text-slate-300">
-                  Password
-                </label>
-                <Link href="/auth/forgot-password" passHref>
-                  <span className="text-xs text-purple-400 hover:text-purple-300 cursor-pointer">
-                    Forgot password?
-                  </span>
-                </Link>
-              </div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">
+                Password
+              </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -117,16 +108,17 @@ export default function RecruiterLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 bg-slate-700 border border-slate-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors pr-10"
+                  className="w-full pl-4 pr-10 py-2.5 bg-slate-700 border border-slate-600 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-colors"
                   placeholder="Enter your password"
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 px-3 flex items-center text-slate-400 hover:text-slate-200"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300"
+                  disabled={isLoading}
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -140,6 +132,7 @@ export default function RecruiterLoginPage() {
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="h-4 w-4 text-purple-600 bg-slate-700 border-slate-600 rounded focus:ring-purple-500"
+                  disabled={isLoading}
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-slate-300">
                   Remember me
@@ -149,9 +142,17 @@ export default function RecruiterLoginPage() {
 
             <button
               type="submit"
-              className="w-full bg-white text-slate-900 font-semibold py-3 px-4 rounded-md hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-white transition-colors duration-150"
+              disabled={isLoading}
+              className="w-full bg-white text-slate-900 font-semibold py-3 px-4 rounded-md hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-white transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Sign In
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                "Sign In"
+              )}
             </button>
           </form>
           
@@ -164,33 +165,30 @@ export default function RecruiterLoginPage() {
             </div>
           </div>
           
-          <div className="mt-4">
-            <button
-              type="button"
-              onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 bg-slate-700 hover:bg-slate-600 text-white font-medium py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-slate-500 transition-colors duration-150"
-            >
-              <svg className="h-5 w-5" aria-hidden="true" viewBox="0 0 24 24">
-                <path
-                  d="M12.0003 4.75C13.7703 4.75 15.3553 5.36002 16.6053 6.54998L20.0303 3.125C17.9502 1.19 15.2353 0 12.0003 0C7.31028 0 3.25527 2.69 1.28027 6.60998L5.27028 9.70498C6.21525 6.86002 8.87028 4.75 12.0003 4.75Z"
-                  fill="#EA4335"
-                />
-                <path
-                  d="M23.49 12.275C23.49 11.49 23.415 10.73 23.3 10H12V14.51H18.47C18.18 15.99 17.34 17.25 16.08 18.08L19.945 21.1C22.2 19.01 23.49 15.92 23.49 12.275Z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M5.26498 14.2949C5.02498 13.5699 4.88501 12.7999 4.88501 11.9999C4.88501 11.1999 5.01998 10.4299 5.26498 9.7049L1.275 6.60986C0.46 8.22986 0 10.0599 0 11.9999C0 13.9399 0.46 15.7699 1.28 17.3899L5.26498 14.2949Z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.075C15.0054 18.785 13.6204 19.255 12.0004 19.255C8.8704 19.255 6.21537 17.145 5.2654 14.295L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z"
-                  fill="#34A853"
-                />
-              </svg>
-              Sign in with Google
-            </button>
-          </div>
+          <button
+            onClick={handleGoogleSignIn}
+            className="mt-4 w-full bg-slate-700 text-white font-semibold py-3 px-4 rounded-md hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-slate-500 transition-colors duration-150 flex items-center justify-center"
+          >
+            <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+              <path
+                fill="currentColor"
+                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              />
+              <path
+                fill="currentColor"
+                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              />
+              <path
+                fill="currentColor"
+                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              />
+              <path
+                fill="currentColor"
+                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              />
+            </svg>
+            Sign in with Google
+          </button>
 
           <p className="mt-8 text-center text-sm text-slate-400">
             Don't have a recruiter account?{' '}
@@ -209,9 +207,9 @@ export default function RecruiterLoginPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h2 className="text-3xl font-bold mb-6 text-white">Build Your Dream Team</h2>
+            <h2 className="text-3xl font-bold mb-6 text-white">Manage Your Job Postings</h2>
             <p className="text-purple-200 mb-8 text-sm leading-relaxed">
-              Access your recruiter dashboard to post jobs, manage applications, and connect with the best talent.
+              Access your recruiter dashboard to post jobs, review applications, and find the best candidates.
             </p>
             <ul className="space-y-6">
               <li className="flex items-start space-x-3">
@@ -219,8 +217,8 @@ export default function RecruiterLoginPage() {
                   <Briefcase className="h-5 w-5 text-purple-200" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Post Unlimited Jobs</h3>
-                  <p className="text-purple-200 text-xs">Create and manage job listings to find the perfect candidates.</p>
+                  <h3 className="font-semibold text-white">Job Management</h3>
+                  <p className="text-purple-200 text-xs">Create and manage job postings to attract top talent.</p>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
@@ -228,8 +226,8 @@ export default function RecruiterLoginPage() {
                   <Users className="h-5 w-5 text-purple-200" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Talent Search</h3>
-                  <p className="text-purple-200 text-xs">Browse our candidate database and filter by skills and experience.</p>
+                  <h3 className="font-semibold text-white">Candidate Review</h3>
+                  <p className="text-purple-200 text-xs">Review applications and connect with qualified candidates.</p>
                 </div>
               </li>
               <li className="flex items-start space-x-3">
@@ -237,8 +235,8 @@ export default function RecruiterLoginPage() {
                   <BarChart3 className="h-5 w-5 text-purple-200" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Analytics Dashboard</h3>
-                  <p className="text-purple-200 text-xs">Track performance metrics and optimize your recruitment process.</p>
+                  <h3 className="font-semibold text-white">Analytics</h3>
+                  <p className="text-purple-200 text-xs">Track job performance and application metrics.</p>
                 </div>
               </li>
             </ul>
