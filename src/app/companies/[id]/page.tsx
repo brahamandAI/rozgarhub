@@ -1,194 +1,94 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Building, MapPin, Globe, Briefcase, Users, Award, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { 
-  Building, 
-  MapPin, 
-  Briefcase, 
-  Users, 
-  Globe, 
-  ChevronDown, 
-  Calendar, 
-  Mail, 
-  Phone,
-  ArrowLeft,
-  ExternalLink,
-  Clock
-} from "lucide-react";
+import { useParams } from "next/navigation";
 
-// Company interface
-interface Company {
-  id: number;
+interface CompanyDetails {
+  id: string;
   name: string;
   logo?: string;
-  hasLogo?: boolean;
   industry: string;
   location: string;
   description: string;
-  jobCount: number;
   website?: string;
-  size?: string;
-  founded?: string;
-  employees?: string;
-  headquarters?: string;
-  specialties?: string[];
-  about?: string;
-}
-
-// Job interface
-interface Job {
-  id: number;
-  title: string;
-  department?: string;
-  company: string;
-  companyId: number;
-  location: string;
-  locationType: string;
-  employmentType: string;
-  experienceLevel: string;
-  salary: {
-    min: number | null;
-    max: number | null;
-    currency: string;
-    period: string;
+  companySize?: string;
+  companyBenefits?: string[];
+  hiringNeeds?: string[];
+  preferredLocations?: string[];
+  bio?: string;
+  linkedinUrl?: string;
+  recruiter: {
+    name: string;
+    email: string;
+    phone?: string;
+    position?: string;
   };
-  description: string;
-  postedDate: string;
-  applicantsCount: number;
 }
 
-export default function CompanyDetailPage() {
+export default function CompanyDetailsPage() {
   const params = useParams();
-  const router = useRouter();
-  const companyId = parseInt(params.id as string);
-  
-  const [company, setCompany] = useState<Company | null>(null);
-  const [companyJobs, setCompanyJobs] = useState<Job[]>([]);
+  const [company, setCompany] = useState<CompanyDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
   
   useEffect(() => {
-    // Fetch company details
-    try {
-      const companiesData = localStorage.getItem("companies");
-      if (companiesData) {
-        const companies = JSON.parse(companiesData);
-        const foundCompany = companies.find((c: Company) => c.id === companyId);
-        
-        if (foundCompany) {
-          setCompany(foundCompany);
-          
-          // Fetch jobs for this company
-          const jobsData = localStorage.getItem("jobs");
-          if (jobsData) {
-            const jobs = JSON.parse(jobsData);
-            const filteredJobs = jobs.filter((job: Job) => job.companyId === companyId);
-            setCompanyJobs(filteredJobs);
-          }
-        } else {
-          setError("Company not found");
+    const fetchCompanyDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/companies/${params.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch company details');
         }
-      } else {
-        setError("No companies data available");
-      }
+        const data = await response.json();
+        setCompany(data);
     } catch (error) {
-      console.error("Error fetching company data:", error);
-      setError("Error loading company data");
+        console.error("Error fetching company details:", error);
+        setError("Failed to load company details. Please try again later.");
     } finally {
       setLoading(false);
     }
-  }, [companyId]);
-  
-  // Function to format date
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    } catch (error) {
-      return dateString;
+    };
+
+    if (params.id) {
+      fetchCompanyDetails();
     }
-  };
-  
-  // Format salary range
-  const formatSalary = (salary: Job['salary']) => {
-    const { min, max, currency, period } = salary;
-    
-    let displayCurrency = '';
-    switch(currency) {
-      case 'USD':
-        displayCurrency = '$';
-        break;
-      case 'EUR':
-        displayCurrency = '€';
-        break;
-      case 'GBP':
-        displayCurrency = '£';
-        break;
-      case 'INR':
-      default:
-        displayCurrency = '₹';
-        break;
-    }
-    
-    let displayPeriod = '';
-    switch(period) {
-      case 'hourly':
-        displayPeriod = '/hr';
-        break;
-      case 'daily':
-        displayPeriod = '/day';
-        break;
-      case 'weekly':
-        displayPeriod = '/week';
-        break;
-      case 'monthly':
-        displayPeriod = '/month';
-        break;
-      case 'annual':
-      default:
-        displayPeriod = '/year';
-        break;
-    }
-    
-    if (min && max) {
-      return `${displayCurrency}${min.toLocaleString()} - ${displayCurrency}${max.toLocaleString()}${displayPeriod}`;
-    } else if (min) {
-      return `${displayCurrency}${min.toLocaleString()}${displayPeriod}`;
-    } else if (max) {
-      return `Up to ${displayCurrency}${max.toLocaleString()}${displayPeriod}`;
-    } else {
-      return 'Not specified';
-    }
-  };
+  }, [params.id]);
   
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
+          <p className="mt-4 text-slate-400">Loading company details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center max-w-md">
+          <p className="text-red-400">{error}</p>
+          <Link href="/companies" className="mt-4 inline-block text-purple-400 hover:text-purple-300">
+            Return to Companies
+          </Link>
+        </div>
       </div>
     );
   }
   
-  if (error || !company) {
+  if (!company) {
     return (
-      <div className="min-h-screen bg-slate-900 text-white pt-32">
-        <div className="max-w-4xl mx-auto p-8 text-center">
-          <Building className="h-16 w-16 text-slate-700 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-4">Company Not Found</h1>
-          <p className="text-slate-400 mb-8">{error || "The company you're looking for doesn't exist or has been removed."}</p>
-          <Link 
-            href="/companies" 
-            className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
-          >
-            <ArrowLeft className="mr-2 h-5 w-5" />
-            Back to Companies
+      <div className="min-h-screen bg-slate-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <Building className="h-12 w-12 text-slate-600 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-white mb-2">Company not found</h3>
+          <Link href="/companies" className="text-purple-400 hover:text-purple-300">
+            Return to Companies
           </Link>
         </div>
       </div>
@@ -200,256 +100,212 @@ export default function CompanyDetailPage() {
       {/* Fixed height spacer to push content below navbar */}
       <div className="h-20"></div>
       
-      <div className="p-4 md:p-8 mt-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Breadcrumb navigation */}
-          <div className="mb-8">
+      <div className="p-4 md:p-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Back Button */}
             <Link 
               href="/companies" 
-              className="flex items-center text-sm text-slate-400 hover:text-white transition-colors"
+            className="inline-flex items-center text-slate-400 hover:text-white mb-8 transition-colors"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              <span>Back to Companies</span>
+            Back to Companies
             </Link>
-          </div>
 
-          {/* Company header */}
+          {/* Company Header */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-slate-800 rounded-lg overflow-hidden shadow-lg"
+            className="bg-slate-800 rounded-lg p-8 mb-8"
           >
-            <div className="p-8">
-              <div className="flex flex-col md:flex-row items-start md:items-center">
-                <div className="w-20 h-20 bg-slate-700 rounded-lg flex items-center justify-center mr-6 mb-4 md:mb-0 flex-shrink-0">
-                  {company.hasLogo || company.logo ? (
-                    <img src={company.logo} alt={`${company.name} logo`} className="w-full h-full object-cover rounded-lg" />
+            <div className="flex items-start gap-6">
+              <div className="w-24 h-24 bg-slate-700 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                {company.logo ? (
+                  <img src={company.logo} alt={`${company.name} logo`} className="w-full h-full object-cover" />
                   ) : (
                     <Building className="h-12 w-12 text-purple-400" />
                   )}
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-white mb-2">{company.name}</h1>
-                  <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400">
+                <div className="flex flex-wrap gap-4 text-slate-400">
+                  <div className="flex items-center">
+                    <MapPin className="h-4 w-4 mr-1" />
+                    <span>{company.location}</span>
+                  </div>
                     <div className="flex items-center">
-                      <Briefcase className="h-4 w-4 mr-1 text-purple-400" />
+                    <Briefcase className="h-4 w-4 mr-1" />
                       <span>{company.industry}</span>
                     </div>
+                  {company.companySize && (
                     <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-1 text-purple-400" />
-                      <span>{company.location}</span>
+                      <Users className="h-4 w-4 mr-1" />
+                      <span>{company.companySize}</span>
                     </div>
-                    {company.size && (
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1 text-purple-400" />
-                        <span>{company.size}</span>
-                      </div>
-                    )}
-                    {company.website && (
-                      <a 
-                        href={company.website.startsWith('http') ? company.website : `https://${company.website}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center hover:text-purple-400 transition-colors"
-                      >
-                        <Globe className="h-4 w-4 mr-1 text-purple-400" />
-                        <span>{company.website.replace(/^https?:\/\//, '')}</span>
-                        <ExternalLink className="h-3 w-3 ml-1" />
-                      </a>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Main content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-            {/* Company info */}
+          {/* Company Details */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="md:col-span-2 space-y-8">
+              {/* About Section */}
             <motion.div 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="lg:col-span-2 space-y-8"
-            >
-              {/* About */}
-              <div className="bg-slate-800 rounded-lg p-6 shadow-lg">
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="bg-slate-800 rounded-lg p-6"
+              >
                 <h2 className="text-xl font-semibold text-white mb-4">About {company.name}</h2>
-                <p className="text-slate-300 whitespace-pre-line">
-                  {company.about || company.description}
-                </p>
-                
-                {company.specialties && company.specialties.length > 0 && (
-                  <div className="mt-6">
-                    <h3 className="text-lg font-medium text-white mb-3">Specialties</h3>
+                <p className="text-slate-300 whitespace-pre-line">{company.description}</p>
+                {company.bio && (
+                  <p className="text-slate-300 mt-4 whitespace-pre-line">{company.bio}</p>
+                )}
+              </motion.div>
+
+              {/* Hiring Needs */}
+              {company.hiringNeeds && company.hiringNeeds.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="bg-slate-800 rounded-lg p-6"
+                >
+                  <h2 className="text-xl font-semibold text-white mb-4">Hiring Needs</h2>
                     <div className="flex flex-wrap gap-2">
-                      {company.specialties.map((specialty, index) => (
+                    {company.hiringNeeds.map((need, index) => (
                         <span 
                           key={index} 
-                          className="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm"
+                        className="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-sm"
                         >
-                          {specialty}
+                        {need}
                         </span>
                       ))}
-                    </div>
                   </div>
-                )}
-              </div>
-              
-              {/* Job postings */}
-              <div className="bg-slate-800 rounded-lg p-6 shadow-lg">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-white">Open Positions</h2>
-                  <span className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-full text-sm">
-                    {companyJobs.length} jobs
-                  </span>
-                </div>
-                
-                {companyJobs.length > 0 ? (
-                  <div className="space-y-4">
-                    {companyJobs.map((job) => (
-                      <div 
-                        key={job.id}
-                        className="p-4 bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors"
+                </motion.div>
+              )}
+
+              {/* Preferred Locations */}
+              {company.preferredLocations && company.preferredLocations.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="bg-slate-800 rounded-lg p-6"
+                >
+                  <h2 className="text-xl font-semibold text-white mb-4">Preferred Locations</h2>
+                  <div className="flex flex-wrap gap-2">
+                    {company.preferredLocations.map((location, index) => (
+                      <span 
+                        key={index}
+                        className="px-3 py-1 bg-slate-700 text-slate-300 rounded-full text-sm"
                       >
-                        <Link href={`/jobs/${job.id}`} className="block">
-                          <h3 className="text-lg font-medium text-white mb-2">{job.title}</h3>
-                          
-                          <div className="flex flex-wrap gap-y-2 gap-x-4 text-sm text-slate-300 mb-3">
-                            {job.department && (
-                              <div className="flex items-center">
-                                <Briefcase className="h-4 w-4 mr-1 text-slate-400" />
-                                <span>{job.department}</span>
-                              </div>
-                            )}
-                            <div className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-1 text-slate-400" />
-                              <span>{job.location}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <Clock className="h-4 w-4 mr-1 text-slate-400" />
-                              <span>{job.employmentType.replace('-', ' ')}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-between items-center">
-                            <div className="text-sm text-purple-400">
-                              {formatSalary(job.salary)}
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              Posted {formatDate(job.postedDate)}
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
+                        {location}
+                      </span>
                     ))}
                   </div>
-                ) : (
-                  <div className="bg-slate-700/50 p-6 rounded-md text-center">
-                    <Briefcase className="h-10 w-10 text-slate-500 mx-auto mb-3" />
-                    <p className="text-slate-400">No open positions at the moment.</p>
-                    <p className="text-xs text-slate-500 mt-1">
-                      Check back later for new opportunities.
-                    </p>
-                  </div>
+                </motion.div>
                 )}
               </div>
+
+            {/* Sidebar */}
+            <div className="space-y-8">
+              {/* Company Benefits */}
+              {company.companyBenefits && company.companyBenefits.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-slate-800 rounded-lg p-6"
+                >
+                  <h2 className="text-xl font-semibold text-white mb-4">Benefits & Perks</h2>
+                  <ul className="space-y-3">
+                    {company.companyBenefits.map((benefit, index) => (
+                      <li key={index} className="flex items-start">
+                        <Award className="h-5 w-5 text-purple-400 mr-2 mt-0.5" />
+                        <span className="text-slate-300">{benefit}</span>
+                      </li>
+                    ))}
+                  </ul>
             </motion.div>
+              )}
             
-            {/* Company details sidebar */}
+              {/* Contact Information */}
             <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="space-y-8"
-            >
-              {/* Company overview */}
-              <div className="bg-slate-800 rounded-lg p-6 shadow-lg">
-                <h2 className="text-xl font-semibold text-white mb-4">Company Overview</h2>
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="bg-slate-800 rounded-lg p-6"
+              >
+                <h2 className="text-xl font-semibold text-white mb-4">Contact Information</h2>
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-400">Industry</h3>
-                    <p className="text-white">{company.industry}</p>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-400">Location</h3>
-                    <p className="text-white">{company.location}</p>
-                  </div>
-                  
-                  {company.size && (
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-400">Company Size</h3>
-                      <p className="text-white">{company.size}</p>
+                  {/* Recruiter Details */}
+                  <div className="space-y-3">
+                    <div className="flex items-center text-slate-300">
+                      <Users className="h-5 w-5 mr-2" />
+                      <span>{company.recruiter.name}</span>
+                    </div>
+                    {company.recruiter.position && (
+                      <div className="flex items-center text-slate-300">
+                        <Briefcase className="h-5 w-5 mr-2" />
+                        <span>{company.recruiter.position}</span>
                     </div>
                   )}
-                  
-                  {company.founded && (
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-400">Founded</h3>
-                      <p className="text-white">{company.founded}</p>
-                    </div>
-                  )}
-                  
-                  {company.headquarters && (
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-400">Headquarters</h3>
-                      <p className="text-white">{company.headquarters}</p>
-                    </div>
-                  )}
-                  
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-400">Job Openings</h3>
-                    <p className="text-white">{company.jobCount || companyJobs.length} open positions</p>
-                  </div>
-                </div>
+                    <a 
+                      href={`mailto:${company.recruiter.email}`}
+                      className="flex items-center text-slate-300 hover:text-purple-400 transition-colors"
+                    >
+                      <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <path d="M22 6l-10 7L2 6" />
+                      </svg>
+                      <span>{company.recruiter.email}</span>
+                    </a>
+                    {company.recruiter.phone && (
+                      <a 
+                        href={`tel:${company.recruiter.phone}`}
+                        className="flex items-center text-slate-300 hover:text-purple-400 transition-colors"
+                      >
+                        <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                        </svg>
+                        <span>{company.recruiter.phone}</span>
+                      </a>
+                    )}
               </div>
               
-              {/* Contact info */}
-              <div className="bg-slate-800 rounded-lg p-6 shadow-lg">
-                <h2 className="text-xl font-semibold text-white mb-4">Contact Information</h2>
-                
+                  {/* Company Links */}
+                  <div className="pt-4 border-t border-slate-700 space-y-3">
                 {company.website && (
-                  <div className="flex items-start mb-4">
-                    <Globe className="h-5 w-5 text-purple-400 mt-0.5 mr-3" />
-                    <div>
-                      <h3 className="text-sm font-medium text-slate-400">Website</h3>
                       <a 
                         href={company.website.startsWith('http') ? company.website : `https://${company.website}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-white hover:text-purple-400 transition-colors flex items-center"
+                        className="flex items-center text-slate-300 hover:text-purple-400 transition-colors"
                       >
-                        <span>{company.website.replace(/^https?:\/\//, '')}</span>
-                        <ExternalLink className="h-3 w-3 ml-1" />
+                        <Globe className="h-5 w-5 mr-2" />
+                        <span>Company Website</span>
                       </a>
-                    </div>
-                  </div>
-                )}
-                
-                <div className="flex items-start">
-                  <MapPin className="h-5 w-5 text-purple-400 mt-0.5 mr-3" />
-                  <div>
-                    <h3 className="text-sm font-medium text-slate-400">Address</h3>
-                    <p className="text-white">{company.location}</p>
+                    )}
+                    {company.linkedinUrl && (
+                      <a 
+                        href={company.linkedinUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-slate-300 hover:text-purple-400 transition-colors"
+                      >
+                        <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                        <span>Company LinkedIn</span>
+                      </a>
+                    )}
                   </div>
                 </div>
+              </motion.div>
               </div>
-              
-              {/* Similar companies - would be implemented with real data */}
-              <div className="bg-slate-800 rounded-lg p-6 shadow-lg">
-                <h2 className="text-xl font-semibold text-white mb-4">Similar Companies</h2>
-                <p className="text-slate-400 text-sm">Companies in {company.industry}</p>
-                
-                <Link 
-                  href="/companies" 
-                  className="inline-block mt-4 text-sm text-purple-400 hover:text-purple-300"
-                >
-                  View all companies
-                </Link>
-              </div>
-            </motion.div>
           </div>
         </div>
       </div>

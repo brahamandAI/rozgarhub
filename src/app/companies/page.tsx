@@ -7,14 +7,12 @@ import Link from "next/link";
 
 // Define company type
 interface Company {
-  id: number;
+  id: string;
   name: string;
   logo?: string;
-  hasLogo?: boolean;
   industry: string;
   location: string;
   description: string;
-  jobCount: number;
   website?: string;
 }
 
@@ -22,20 +20,29 @@ export default function CompaniesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [industryFilter, setIndustryFilter] = useState("");
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Load companies from localStorage on component mount
+  // Fetch companies from API
   useEffect(() => {
-    // In a real app, this would be an API call to fetch companies
-    const storedCompanies = localStorage.getItem('companies');
-    if (storedCompanies) {
+    const fetchCompanies = async () => {
       try {
-        const parsedCompanies = JSON.parse(storedCompanies);
-        setCompanies(parsedCompanies);
+        setLoading(true);
+        const response = await fetch('/api/companies');
+        if (!response.ok) {
+          throw new Error('Failed to fetch companies');
+        }
+        const data = await response.json();
+        setCompanies(data);
       } catch (error) {
-        console.error("Error parsing companies data:", error);
-        setCompanies([]);
+        console.error("Error fetching companies:", error);
+        setError("Failed to load companies. Please try again later.");
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+
+    fetchCompanies();
   }, []);
 
   // Filter companies based on search term and industry filter
@@ -103,8 +110,23 @@ export default function CompaniesPage() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
+              <p className="mt-4 text-slate-400">Loading companies...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center">
+              <p className="text-red-400">{error}</p>
+            </div>
+          )}
+
           {/* Companies List */}
-          {filteredCompanies.length > 0 ? (
+          {!loading && !error && filteredCompanies.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCompanies.map((company, index) => (
                 <motion.div
@@ -150,11 +172,6 @@ export default function CompaniesPage() {
                       </div>
                     )}
                     
-                    <div className="flex items-center text-sm text-slate-400 mb-6">
-                      <Briefcase className="h-4 w-4 mr-1" />
-                      <span>{company.jobCount} open positions</span>
-                    </div>
-                    
                     <Link 
                       href={`/companies/${company.id}`} 
                       className="block w-full text-center bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
@@ -165,16 +182,13 @@ export default function CompaniesPage() {
                 </motion.div>
               ))}
             </div>
-          ) : (
+          ) : !loading && !error ? (
             <div className="bg-slate-800 p-8 rounded-lg text-center">
               <Building className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No companies registered yet</h3>
-              <p className="text-slate-400">Companies will appear here once recruiters register on RozgarHub</p>
-              <Link href="/auth/recruiter/register" className="mt-6 inline-block px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors">
-                Register as a Recruiter
-              </Link>
+              <h3 className="text-xl font-semibold text-white mb-2">No companies found</h3>
+              <p className="text-slate-400">Try adjusting your search or filters</p>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

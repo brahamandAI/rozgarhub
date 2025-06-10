@@ -10,7 +10,7 @@ const prismaClientSingleton = () => {
       }
     },
     log: ['error', 'warn']
-  });
+          });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const { password: _, ...jobSeekerWithoutPassword } = jobSeeker;
 
     return NextResponse.json(
-      { 
+      {
         message: "Registration successful",
         user: jobSeekerWithoutPassword 
       },
