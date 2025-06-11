@@ -1,6 +1,10 @@
 import { PrismaClient } from "@/generated/prisma";
 
-const DATABASE_URL = "mongodb+srv://rozgarhubrobustrix:YkwgrX0rwj22uRcB@cluster0.2svd0zr.mongodb.net/rozgarhub?retryWrites=true&w=majority&appName=Cluster0";
+const DATABASE_URL = process.env.DATABASE_URL;
+
+if (!DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
